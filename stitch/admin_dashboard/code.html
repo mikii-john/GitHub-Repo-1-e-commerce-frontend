@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CuratorCommerce Management Console</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-error-container": "#93000a",
+                "tertiary-container": "#585be6",
+                "on-tertiary-fixed": "#07006c",
+                "error-container": "#ffdad6",
+                "primary-fixed": "#dbe1ff",
+                "inverse-surface": "#2e3132",
+                "surface": "#f8f9fa",
+                "on-surface-variant": "#434655",
+                "on-secondary-container": "#57657a",
+                "outline-variant": "#c3c6d7",
+                "on-error": "#ffffff",
+                "surface-variant": "#e1e3e4",
+                "surface-dim": "#d9dadb",
+                "background": "#f8f9fa",
+                "outline": "#737686",
+                "on-primary": "#ffffff",
+                "on-secondary-fixed-variant": "#3a485b",
+                "surface-container": "#edeeef",
+                "primary": "#004ac6",
+                "secondary": "#515f74",
+                "on-primary-fixed-variant": "#003ea8",
+                "on-tertiary-container": "#f1eeff",
+                "secondary-fixed": "#d5e3fc",
+                "surface-bright": "#f8f9fa",
+                "on-primary-fixed": "#00174b",
+                "on-background": "#191c1d",
+                "on-surface": "#191c1d",
+                "tertiary": "#3e3fcc",
+                "surface-container-low": "#f3f4f5",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary-fixed": "#0d1c2e",
+                "surface-tint": "#0053db",
+                "primary-container": "#2563eb",
+                "error": "#ba1a1a",
+                "tertiary-fixed-dim": "#c0c1ff",
+                "inverse-primary": "#b4c5ff",
+                "inverse-on-surface": "#f0f1f2",
+                "on-tertiary": "#ffffff",
+                "tertiary-fixed": "#e1e0ff",
+                "on-tertiary-fixed-variant": "#2f2ebe",
+                "on-secondary": "#ffffff",
+                "on-primary-container": "#eeefff",
+                "surface-container-highest": "#e1e3e4",
+                "primary-fixed-dim": "#b4c5ff",
+                "surface-container-high": "#e7e8e9",
+                "secondary-container": "#d5e3fc",
+                "secondary-fixed-dim": "#b9c7df"
+            },
+            "borderRadius": {
+                "DEFAULT": "1rem",
+                "lg": "2rem",
+                "xl": "3rem",
+                "full": "9999px"
+            },
+            "fontFamily": {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e1e3e4; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-hidden h-screen flex">
+<!-- SideNavBar (Shared Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 dark:bg-slate-950 flex flex-col py-6 px-4 z-50">
+<div class="mb-10 px-2">
+<h1 class="text-lg font-black text-slate-900 dark:text-slate-50 tracking-tighter">Management Console</h1>
+<p class="text-xs font-medium text-slate-500 uppercase tracking-widest mt-1">Seller Portal</p>
+</div>
+<nav class="flex-grow space-y-1">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg bg-blue-50/50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-300 border-l-4 border-blue-600 font-sans text-sm font-medium hover:scale-[1.02] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-sans text-sm font-medium hover:scale-[1.02] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="package_2">package_2</span>
+<span>Orders</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-sans text-sm font-medium hover:scale-[1.02] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span>Inventory</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-sans text-sm font-medium hover:scale-[1.02] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Customers</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-sans text-sm font-medium hover:scale-[1.02] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-sans text-sm font-medium hover:scale-[1.02] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
+<div class="flex items-center gap-3 px-2 mb-4">
+<img alt="User profile" class="w-10 h-10 rounded-full object-cover" data-alt="professional headshot of a female executive in a modern office setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWr-6C2yZvo8D5JVwN48vnAmOvGjndaySEK-RrgODAiqiw70igy-_wnclksGoZYKI9t0AqhgqN84bYeYQva6jE8oQGAdW_-ISpjkAJz0BWZ0nhMa-jnsIUzTaVTzVIu00lQ6HXogzly4SLMx5mRhr5UzlCj4GuvwxbIiW8Ap7uDuu5-2rKett58hTtPji7-FeT1tymOirEUSoumocmcCCYRFMKZy7z6gyUvoa6cFuV_ERzlzO6U5FrxTUkWbTkB3--yYu7spkWFJk"/>
+<div>
+<p class="text-sm font-bold text-slate-900">Alex Curator</p>
+<p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Super Admin</p>
+</div>
+</div>
+<button class="w-full py-2.5 rounded-lg bg-primary text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all">
+                View Storefront
+            </button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 flex-1 h-screen overflow-y-auto custom-scrollbar flex flex-col">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md px-10 py-6 flex items-center justify-between">
+<div>
+<h2 class="text-2xl font-extrabold tracking-tight text-on-background">System Overview</h2>
+<p class="text-sm text-secondary">Real-time diagnostics and global marketplace health.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-low px-4 py-2 rounded-full flex items-center gap-2">
+<span class="w-2 h-2 bg-green-500 rounded-full"></span>
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider">System Live: 99.9%</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-outline" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+</button>
+</div>
+</div>
+</header>
+<div class="px-10 pb-10 space-y-8">
+<!-- Bento Grid Metrics -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Metric Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+</div>
+<span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+12.4%</span>
+</div>
+<p class="text-label-md text-outline uppercase tracking-widest mb-1">Total Sales</p>
+<h3 class="text-3xl font-bold text-on-surface tracking-tighter">$4,281,950</h3>
+</div>
+<!-- Metric Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-tertiary/10 rounded-lg">
+<span class="material-symbols-outlined text-tertiary" data-icon="group">group</span>
+</div>
+<span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">+3.1%</span>
+</div>
+<p class="text-label-md text-outline uppercase tracking-widest mb-1">Active Users</p>
+<h3 class="text-3xl font-bold text-on-surface tracking-tighter">84,102</h3>
+</div>
+<!-- Metric Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-orange-100 rounded-lg">
+<span class="material-symbols-outlined text-orange-600" data-icon="shopping_bag">shopping_bag</span>
+</div>
+<span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-full">Steady</span>
+</div>
+<p class="text-label-md text-outline uppercase tracking-widest mb-1">Total Orders</p>
+<h3 class="text-3xl font-bold text-on-surface tracking-tighter">12,540</h3>
+</div>
+<!-- Metric Card 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border-2 border-primary/5">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-green-100 rounded-lg">
+<span class="material-symbols-outlined text-green-600" data-icon="health_and_safety">health_and_safety</span>
+</div>
+<span class="text-xs font-bold text-green-600">Stable</span>
+</div>
+<p class="text-label-md text-outline uppercase tracking-widest mb-1">System Health</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="h-2 flex-1 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-green-500 w-[98%]"></div>
+</div>
+<span class="text-sm font-bold">98%</span>
+</div>
+</div>
+</section>
+<!-- User Management Section -->
+<section class="bg-surface-container-low rounded-xl p-1">
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden">
+<div class="px-6 py-5 border-b border-surface-container-low flex items-center justify-between">
+<div>
+<h3 class="text-xl font-bold text-on-surface">User Management</h3>
+<p class="text-sm text-secondary">Control buyer and seller access permissions.</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-low text-on-surface text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors">Export CSV</button>
+<button class="bg-primary text-white text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">Add New User</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low/30">
+<tr>
+<th class="px-6 py-4 text-[10px] font-bold text-outline uppercase tracking-widest">User Details</th>
+<th class="px-6 py-4 text-[10px] font-bold text-outline uppercase tracking-widest">Role</th>
+<th class="px-6 py-4 text-[10px] font-bold text-outline uppercase tracking-widest">Joined Date</th>
+<th class="px-6 py-4 text-[10px] font-bold text-outline uppercase tracking-widest">Status</th>
+<th class="px-6 py-4 text-[10px] font-bold text-outline uppercase tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<tr class="hover:bg-surface/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-xs">JD</div>
+<div>
+<p class="text-sm font-bold">Julianne Devis</p>
+<p class="text-xs text-outline">julianne.d@example.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium text-secondary">Seller</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs text-outline">Oct 12, 2023</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-error px-3 py-1.5 rounded-lg border border-error/20 hover:bg-error/5 transition-colors">Block Access</button>
+</td>
+</tr>
+<tr class="bg-surface-container-low/10">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">MM</div>
+<div>
+<p class="text-sm font-bold">Marcus Miller</p>
+<p class="text-xs text-outline">m.miller@techhub.io</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium text-secondary">Buyer</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs text-outline">Nov 04, 2023</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-[10px] font-bold uppercase">Blocked</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-primary px-3 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/5 transition-colors">Unblock User</button>
+</td>
+</tr>
+<tr class="hover:bg-surface/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-xs">SK</div>
+<div>
+<p class="text-sm font-bold">Sarah Kovit</p>
+<p class="text-xs text-outline">sarah.k@design.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium text-secondary">Seller</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs text-outline">Dec 15, 2023</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-xs font-bold text-error px-3 py-1.5 rounded-lg border border-error/20 hover:bg-error/5 transition-colors">Block Access</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- All Orders View -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Orders Table (Large) -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-lg shadow-sm">
+<div class="px-6 py-5 flex items-center justify-between">
+<h3 class="text-lg font-bold">Recent Transactions</h3>
+<a class="text-primary text-xs font-bold uppercase tracking-widest hover:underline" href="#">View All Orders</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-3 text-[10px] font-bold text-outline uppercase tracking-widest">Order ID</th>
+<th class="px-6 py-3 text-[10px] font-bold text-outline uppercase tracking-widest">Product</th>
+<th class="px-6 py-3 text-[10px] font-bold text-outline uppercase tracking-widest">Amount</th>
+<th class="px-6 py-3 text-[10px] font-bold text-outline uppercase tracking-widest">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<tr>
+<td class="px-6 py-4 text-xs font-mono font-bold text-secondary">#CC-9402</td>
+<td class="px-6 py-4 text-sm font-medium">Leather Studio Chair</td>
+<td class="px-6 py-4 text-sm font-bold">$1,200.00</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold uppercase">Paid</span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/20">
+<td class="px-6 py-4 text-xs font-mono font-bold text-secondary">#CC-9401</td>
+<td class="px-6 py-4 text-sm font-medium">Minimalist Desk Lamp</td>
+<td class="px-6 py-4 text-sm font-bold">$145.00</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold uppercase">Shipped</span>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-xs font-mono font-bold text-secondary">#CC-9400</td>
+<td class="px-6 py-4 text-sm font-medium">Ceramic Vase Set</td>
+<td class="px-6 py-4 text-sm font-bold">$89.99</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase">Delivered</span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/20">
+<td class="px-6 py-4 text-xs font-mono font-bold text-secondary">#CC-9399</td>
+<td class="px-6 py-4 text-sm font-medium">Acoustic Panel Kit</td>
+<td class="px-6 py-4 text-sm font-bold">$420.00</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-[10px] font-bold uppercase">Pending</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- System Support / Health Card (Small) -->
+<div class="space-y-6">
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-sm flex flex-col h-full">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="support_agent">support_agent</span>
+<h3 class="text-lg font-bold">Support Center</h3>
+</div>
+<div class="space-y-4 flex-grow">
+<div class="p-4 bg-surface-container-low rounded-lg">
+<p class="text-xs font-bold text-primary uppercase tracking-widest mb-1">Open Tickets</p>
+<h4 class="text-2xl font-bold">14</h4>
+<p class="text-[10px] text-outline mt-1">4 High Priority tickets need review.</p>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg">
+<p class="text-xs font-bold text-tertiary uppercase tracking-widest mb-1">Server Latency</p>
+<h4 class="text-2xl font-bold">24ms</h4>
+<p class="text-[10px] text-outline mt-1">Global average response time.</p>
+</div>
+</div>
+<button class="w-full mt-6 py-3 bg-surface-container-high text-on-surface text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-outline-variant transition-colors">
+                            Manage Tickets
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Contextual FAB (Only on specific screens, but useful for quick global search/add) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-2xl" data-icon="add" style="font-variation-settings: 'FILL' 0;">add</span>
+</button>
+</body></html>

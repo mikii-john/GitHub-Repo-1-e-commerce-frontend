@@ -55,6 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // Redirect based on role
     if (userData.role === 'admin') router.push('/dashboard/admin');
+    else if (userData.role === 'staff') router.push('/dashboard/staff');
     else if (userData.role === 'seller') router.push('/dashboard/seller');
     else router.push('/dashboard/buyer');
   };

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout | CuratorCommerce</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#585be6",
+                        "on-tertiary-fixed": "#07006c",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#dbe1ff",
+                        "inverse-surface": "#2e3132",
+                        "surface": "#f8f9fa",
+                        "on-surface-variant": "#434655",
+                        "on-secondary-container": "#57657a",
+                        "outline-variant": "#c3c6d7",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "surface-dim": "#d9dadb",
+                        "background": "#f8f9fa",
+                        "outline": "#737686",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "surface-container": "#edeeef",
+                        "primary": "#004ac6",
+                        "secondary": "#515f74",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-tertiary-container": "#f1eeff",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed": "#00174b",
+                        "on-background": "#191c1d",
+                        "on-surface": "#191c1d",
+                        "tertiary": "#3e3fcc",
+                        "surface-container-low": "#f3f4f5",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "surface-tint": "#0053db",
+                        "primary-container": "#2563eb",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#c0c1ff",
+                        "inverse-primary": "#b4c5ff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#e1e0ff",
+                        "on-tertiary-fixed-variant": "#2f2ebe",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#eeefff",
+                        "surface-container-highest": "#e1e3e4",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-container-high": "#e7e8e9",
+                        "secondary-container": "#d5e3fc",
+                        "secondary-fixed-dim": "#b9c7df"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none font-sans antialiased tracking-tight">
+<div class="flex justify-between items-center px-6 py-3 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">CuratorCommerce</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200" href="#">Shop</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200" href="#">Categories</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200" href="#">Deals</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<button class="p-2 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
+</button>
+</div>
+<button class="p-2 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
+<!-- Checkout Flow Progress -->
+<div class="flex items-center justify-center mb-12 space-x-4">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-xs font-bold">1</span>
+<span class="text-sm font-semibold text-on-surface">Cart</span>
+</div>
+<div class="h-px w-8 md:w-16 bg-outline-variant/30"></div>
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center text-xs font-bold">2</span>
+<span class="text-sm font-semibold text-on-surface">Shipping</span>
+</div>
+<div class="h-px w-8 md:w-16 bg-outline-variant/30"></div>
+<div class="flex items-center gap-2 opacity-40">
+<span class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xs font-bold">3</span>
+<span class="text-sm font-semibold text-on-surface">Payment</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+<!-- Left Column: Cart & Details -->
+<div class="lg:col-span-7 space-y-8">
+<!-- Section: Shopping Cart Summary -->
+<section class="bg-surface-container-low p-8 rounded-xl">
+<h2 class="text-2xl font-bold tracking-tight mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+                        Review Your Selection
+                    </h2>
+<div class="space-y-4">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex gap-6 items-center group transition-all duration-300 hover:shadow-lg hover:shadow-on-surface/5">
+<div class="w-24 h-24 rounded-DEFAULT overflow-hidden flex-shrink-0">
+<img alt="Product Image" class="w-full h-full object-cover" data-alt="Close-up of a minimalist silver wristwatch with a white face and tan leather strap against a clean grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzuca1Hu0mO4iroYIE57CBmAmHvcgcAuk0oJ9FxzUsVFA9bZUPfVIvPGqu9qTZKmTIxhMf6ZGbR0klru4XATgwDc7yH3MDGs2B2TFxsrY9ItdCeh_JAJpQ2chWoy2KjZemFqnmO1i8YBNxLISyXr5cZMcEDXN3FrQIZJxvrbxMOVD7HScODmCANOM1YMkMyTz9FyJIyrN-ZE0I3bWYB3CPUdMnqjJlNG1pF8pNAUcIL_C28KrgDIuXOwNVYRYUkYIJLF5aDg80lLI"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold tracking-widest text-outline uppercase mb-1">Accessories</p>
+<h3 class="text-lg font-semibold text-on-surface">The Curator's Watch</h3>
+</div>
+<p class="text-lg font-bold text-primary">$180.00</p>
+</div>
+<div class="mt-4 flex justify-between items-center">
+<div class="flex items-center bg-surface-container p-1 rounded-full">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-4 text-sm font-bold">1</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<button class="text-error text-sm font-medium flex items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">delete</span> Remove
+                                    </button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex gap-6 items-center group transition-all duration-300 hover:shadow-lg hover:shadow-on-surface/5">
+<div class="w-24 h-24 rounded-DEFAULT overflow-hidden flex-shrink-0">
+<img alt="Product Image" class="w-full h-full object-cover" data-alt="A modern graphite grey tablet lying flat on a dark wooden surface, reflecting soft architectural lighting from the side" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmq0eLR-8k0vyXNUh_iJtaPotGP2lOePJGLTEZkjAjPkdP0TxfY1Y9euC-0Io6MO0seULrdnLvIsdDIl6Sj5RZj1LzGlheD6nmtZyt8yPaU-dm96pxU6NefPeQNyxzjg9kNcbzAuksO2a8mC80JaxFCxTlMaWwtOPUtWSR81-Tnlt0kbvYFTQf7BZAC-SMaDNQwXMv0ONXmP6x3zY-ZoL5G709dJgq6dv0Qcvkd12yRzHGCvw973eI0lNJ85innaemGPZS0VG2mR0"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold tracking-widest text-outline uppercase mb-1">Electronics</p>
+<h3 class="text-lg font-semibold text-on-surface">Canvas Pro Tablet</h3>
+</div>
+<p class="text-lg font-bold text-primary">$799.00</p>
+</div>
+<div class="mt-4 flex justify-between items-center">
+<div class="flex items-center bg-surface-container p-1 rounded-full">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">remove</span></button>
+<span class="px-4 text-sm font-bold">1</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+<button class="text-error text-sm font-medium flex items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">delete</span> Remove
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Shipping Address -->
+<section class="bg-surface-container-low p-8 rounded-xl">
+<h2 class="text-2xl font-bold tracking-tight mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+                        Shipping Information
+                    </h2>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2 col-span-2">
+<label class="text-xs font-bold uppercase tracking-wider text-outline px-1">Full Name</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline-variant" placeholder="John Doe" type="text"/>
+</div>
+<div class="space-y-2 col-span-2">
+<label class="text-xs font-bold uppercase tracking-wider text-outline px-1">Address Line</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline-variant" placeholder="123 Gallery Lane, Art District" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-outline px-1">City</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline-variant" placeholder="Addis Ababa" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-outline px-1">Postal Code</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline-variant" placeholder="1000" type="text"/>
+</div>
+</form>
+</section>
+<!-- Section: Payment Integration (Chapa Focused) -->
+<section class="bg-surface-container-low p-8 rounded-xl">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                            Secure Payment
+                        </h2>
+<img alt="Chapa Logo Placeholder" class="h-6 opacity-80" data-alt="Abstract logo with sharp geometric shapes and vibrant primary colors representing a modern fintech company" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI35XP0Lg2NE6czamD7aSfoGNiOr_viy11bQc97C5xLjFG40OAkr0xHIv7Xd1RVMCoxPC3-vzpGppu_5yRsS2LoNAOFGkbPDUm9bj6k_2eZrEdGx7uMNZWgxjWoRpCv509rwxM5HTaZU7kNGGJ_SjC36dhxO8NvKgCJQa--8cVV-tCGU3TYO5b84v32eKtWKU3g8BXd1ZnhG4LVsdAmTT5ObNpPqR8cC6nt9RhCT29WMm1eU4Ckm9Sj9xshcFXAv6xi9qKUDmytXM"/>
+</div>
+<div class="space-y-4">
+<p class="text-sm text-secondary mb-4">Select your preferred payment method. Transactions are encrypted and secured via Chapa.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Option 1: Mobile Money -->
+<label class="relative flex flex-col p-5 bg-surface-container-lowest rounded-lg border-2 border-transparent hover:border-primary/20 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary-fixed/20 group">
+<input checked="" class="sr-only" name="payment" type="radio"/>
+<div class="flex items-center justify-between mb-3">
+<span class="material-symbols-outlined text-primary" data-icon="smartphone">smartphone</span>
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant group-has-[:checked]:border-primary group-has-[:checked]:bg-primary flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
+</div>
+</div>
+<span class="font-bold text-on-surface">Mobile Money</span>
+<span class="text-xs text-secondary mt-1">Telebirr, M-Pesa, HelloCash</span>
+</label>
+<!-- Option 2: Card Payment -->
+<label class="relative flex flex-col p-5 bg-surface-container-lowest rounded-lg border-2 border-transparent hover:border-primary/20 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary-fixed/20 group">
+<input class="sr-only" name="payment" type="radio"/>
+<div class="flex items-center justify-between mb-3">
+<span class="material-symbols-outlined text-primary" data-icon="credit_card">credit_card</span>
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant group-has-[:checked]:border-primary group-has-[:checked]:bg-primary flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
+</div>
+</div>
+<span class="font-bold text-on-surface">International Cards</span>
+<span class="text-xs text-secondary mt-1">Visa, Mastercard, Amex</span>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Order Review & Total -->
+<div class="lg:col-span-5">
+<div class="sticky top-28 space-y-6">
+<section class="bg-surface-container-high p-8 rounded-xl shadow-sm">
+<h3 class="text-xl font-bold tracking-tight mb-8">Order Summary</h3>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between text-secondary">
+<span class="text-sm">Subtotal (2 items)</span>
+<span class="text-sm font-semibold text-on-surface">$979.00</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span class="text-sm">Standard Shipping</span>
+<span class="text-sm font-semibold text-on-surface">$20.00</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span class="text-sm">Estimated Taxes</span>
+<span class="text-sm font-semibold text-on-surface">$45.00</span>
+</div>
+<div class="pt-4 border-t border-outline-variant/30 flex justify-between">
+<span class="text-lg font-bold text-on-surface">Total</span>
+<span class="text-2xl font-black text-primary">$1,044.00</span>
+</div>
+</div>
+<button class="w-full py-5 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group mb-6">
+                            Complete Secure Purchase
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<div class="flex items-center gap-3 justify-center text-xs text-secondary opacity-70">
+<span class="material-symbols-outlined text-sm">lock</span>
+                            256-bit SSL Secure Payment
+                        </div>
+</section>
+<!-- Tracking Quick Link -->
+<section class="bg-surface p-6 rounded-lg border-2 border-dashed border-outline-variant/50 flex items-center justify-between">
+<div>
+<h4 class="text-sm font-bold text-on-surface">Track Previous Orders?</h4>
+<p class="text-xs text-secondary">Visit your management console</p>
+</div>
+<a class="bg-surface-container-highest px-4 py-2 rounded-full text-xs font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+                            Dashboard
+                        </a>
+</section>
+<!-- Trust Badges -->
+<div class="grid grid-cols-3 gap-4 px-2">
+<div class="text-center">
+<span class="material-symbols-outlined text-primary-container block mb-2" data-icon="verified">verified</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-secondary">Verified Shop</span>
+</div>
+<div class="text-center">
+<span class="material-symbols-outlined text-primary-container block mb-2" data-icon="history">history</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-secondary">30-Day Return</span>
+</div>
+<div class="text-center">
+<span class="material-symbols-outlined text-primary-container block mb-2" data-icon="support_agent">support_agent</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-secondary">24/7 Curator</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Space -->
+<footer class="mt-20 py-12 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start">
+<span class="text-xl font-black tracking-tighter text-slate-900 mb-2">CuratorCommerce</span>
+<p class="text-sm text-secondary max-w-xs text-center md:text-left">The premium digital gallery for curated high-end products and editorial experiences.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-sm font-semibold text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-sm font-semibold text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-sm font-semibold text-secondary hover:text-primary transition-colors" href="#">Help Center</a>
+</div>
+</div>
+</footer>
+</body></html>

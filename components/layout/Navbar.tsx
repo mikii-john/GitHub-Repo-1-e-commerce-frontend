@@ -56,6 +56,17 @@ const Navbar = () => {
               />
             </div>
 
+            {/* Cart Button */}
+            <Link 
+              href="/cart" 
+              className="p-2 text-muted hover:text-primary transition-colors relative group"
+            >
+              <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span className="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold shadow-sm">
+                2
+              </span>
+            </Link>
+
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
                 <button className="p-2 text-muted hover:text-primary transition-colors relative">

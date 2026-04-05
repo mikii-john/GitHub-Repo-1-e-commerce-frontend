@@ -38,8 +38,9 @@ export default function AuthPage() {
       
       const { token, user } = data;
       login(token, user);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -67,6 +68,7 @@ export default function AuthPage() {
             <h1 className="text-3xl font-black mb-2">
               {isLogin ? 'Welcome Back' : 'Create Account'}
             </h1>
+            <p className="text-muted mb-8">You haven&apos;t placed any orders yet.</p>
             <p className="text-muted text-sm">
               {isLogin ? 'Securely access your e-commerce dashboard' : 'Join our secure escrow-based shopping platform'}
             </p>
@@ -172,7 +174,6 @@ export default function AuthPage() {
             </button>
           </form>
 
-          {/* Switcher */}
           <div className="mt-8 pt-8 border-t border-border text-center">
             <p className="text-muted text-sm mb-4">
               {isLogin ? "Don't have an account yet?" : "Already have an account?"}
@@ -183,6 +184,27 @@ export default function AuthPage() {
             >
               {isLogin ? 'Switch to Register' : 'Switch to Login'}
             </button>
+          </div>
+
+          {/* Dev Quick Login Section */}
+          <div className="mt-10 p-6 bg-surface-container-low rounded-2xl border border-dashed border-outline-variant/30">
+            <h4 className="text-[10px] font-black text-outline uppercase tracking-widest mb-4">Dev Quick Login (Mock Mode)</h4>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { label: 'Admin', role: 'admin' },
+                { label: 'Seller', role: 'seller' },
+                { label: 'Buyer', role: 'buyer' },
+                { label: 'Staff', role: 'staff' }
+              ].map((role) => (
+                <button
+                  key={role.role}
+                  onClick={() => login('mock-token', { _id: 'mock-id', name: `Mock ${role.label}`, email: `${role.role}@mock.com`, role: role.role as 'admin' | 'seller' | 'buyer' | 'staff' })}
+                  className="py-2.5 px-2 bg-background border border-border rounded-xl text-[10px] font-black hover:border-primary hover:text-primary transition-all uppercase tracking-tighter"
+                >
+                  {role.label}
+                </button>
+              ))}
+            </div>
           </div>
           
           <div className="mt-6 flex items-center justify-center gap-2 text-[10px] text-muted font-bold uppercase tracking-widest">

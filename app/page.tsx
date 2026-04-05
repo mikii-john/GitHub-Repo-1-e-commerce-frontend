@@ -1,179 +1,281 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Navbar from '@/components/layout/Navbar';
-import ProductCard from '@/components/products/ProductCard';
-import api from '@/lib/api';
-import { ShoppingBag, ChevronRight, Zap, ShieldCheck, Truck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React from 'react';
+import Link from 'next/link';
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const { data } = await api.get('/products');
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
   return (
-    <main className="min-h-screen flex flex-col bg-background">
-      <Navbar />
-      
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-slate-900 text-white min-h-[600px] flex items-center">
-        <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.3),rgba(2,6,23,1))]"></div>
-        <div className="absolute top-0 right-0 w-1/2 h-full opacity-30 bg-gradient-to-l from-primary/50 to-transparent"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-20">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold uppercase tracking-wider mb-6">
-                <Zap className="w-4 h-4 fill-current" /> Fast & Secure Escrow Payments
-              </div>
-              
-              <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-                Shop with <span className="text-gradient">Confidence.</span>
+    <div className="bg-surface font-body text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+      <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none font-sans antialiased tracking-tight">
+        <div className="flex justify-between items-center px-6 py-3 max-w-full mx-auto">
+          <div className="flex items-center gap-8">
+            <span className="text-2xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">CuratorCommerce</span>
+            <div className="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96 group">
+              <span className="material-symbols-outlined text-outline text-lg">search</span>
+              <input className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-outline-variant" placeholder="Search curated collections..." type="text"/>
+            </div>
+          </div>
+          <div className="hidden md:flex items-center gap-6">
+            <Link className="text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600 transition-all duration-200" href="#">Shop</Link>
+            <Link className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200" href="#">Categories</Link>
+            <Link className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200" href="#">Deals</Link>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all duration-200">
+              <span className="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+            </button>
+            <Link href="/auth" className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-full transition-all duration-200">
+              <span className="material-symbols-outlined" data-icon="person">person</span>
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <main className="pt-20">
+        {/* Hero */}
+        <section className="px-6 py-12 md:py-24 max-w-7xl mx-auto">
+          <div className="relative overflow-hidden rounded-xl md:rounded-xl h-[500px] md:h-[600px] flex items-center bg-surface-container-high group">
+            <div className="absolute inset-0 z-0">
+              <img alt="Luxury store interior" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3_XDFT3ZuporN1sCnTk3axX3G5eQDi2neAIw-B-x1_kC6vvy5ujY6ilQXQ4tlQlRnezyFK8bO_9M4G3aUjugfNgGuVjR0RUgbwYcLMBVQnJifDin5QISJeqEQWVX79rv_CgGiPw70H6bqMhNtV2k4miWm3r15g-jrTBR4uBXGnfa9BmNNYpnwndINEfhGoRVNhx3zGB1ar2XdH111-_GZAHSpd42wmaW9SST0RbbHW9ea3b5W4uZZsaYnzJ04jfJY4q-lno04RG0"/>
+              <div className="absolute inset-0 bg-gradient-to-r from-on-background/60 to-transparent"></div>
+            </div>
+            <div className="relative z-10 px-8 md:px-20 max-w-2xl">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-xs font-bold tracking-widest uppercase mb-6">
+                Summer 2024 Collection
+              </span>
+              <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-tight tracking-tighter mb-8">
+                The Art of Better Living.
               </h1>
-              
-              <p className="text-xl text-slate-400 mb-10 max-w-lg leading-relaxed">
-                Discover premium products with our state-of-the-art escrow system. Your money is only released when you're happy.
-              </p>
-              
-              <div className="flex flex-wrap gap-4">
-                <button className="px-8 py-4 bg-primary rounded-xl font-bold text-lg hover:bg-primary-dark transition-all shadow-[0_0_20px_rgba(59,130,246,0.5)] active:scale-95 flex items-center gap-2 group">
-                  Explore Products <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="primary-gradient text-white px-8 py-4 rounded-full font-semibold text-lg flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform active:scale-95 shadow-xl shadow-primary/20">
+                  Shop Now
+                  <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </button>
-                <div className="flex items-center gap-4 text-sm text-slate-400">
-                  <div className="flex -space-x-3">
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className={`w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-700 flex items-center justify-center text-[10px] font-bold`}>
-                        {i}
-                      </div>
-                    ))}
+                <button className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 transition-all">
+                  Browse Categories
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Categories */}
+        <section className="py-16 px-6 max-w-7xl mx-auto">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <span className="text-primary font-bold tracking-widest text-xs uppercase mb-2 block">Curation</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-on-surface tracking-tight">Top Categories</h2>
+            </div>
+            <button className="hidden md:flex items-center gap-2 text-secondary font-medium hover:text-primary transition-colors">
+              Explore All Collections
+              <span className="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="group relative rounded-lg overflow-hidden h-[450px] bg-surface-container-low cursor-pointer">
+              <img alt="Electronics category" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2JO0neS5LGFh6JorYFqdOdvD804q0LGu7ZZMvpCxS0BlJD2Omrcls95WnGZsJcG1cd51qr0UrDOiIY-ETU7e3skDh3erA0bZpx1fk-89y7JU0LXLNDlFH7b_37FmUAVQgrOm3FjL2cuZD9nwMYRQk5NShUB3qS6MGfgSH2T-R0OtudoCVVsBUIW3N9cagzDUutzIvd_gGwkVty7Q4r02lcpAz_MeWCYyBR2J3rIuZwy82BpKzeTc2Z2EnHPjhDyNtz7RJDsqGnDA"/>
+              <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-transparent to-transparent opacity-60"></div>
+              <div className="absolute bottom-8 left-8 right-8">
+                <h3 className="text-2xl font-bold text-white mb-2">Electronics</h3>
+                <p className="text-white/80 text-sm mb-4">Precision engineering meets minimalist aesthetics.</p>
+                <span className="text-white font-semibold flex items-center gap-2 text-sm group-hover:translate-x-2 transition-transform">
+                  Shop Electronics <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+            <div className="group relative rounded-lg overflow-hidden h-[450px] bg-surface-container-low cursor-pointer">
+              <img alt="Fashion category" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe9P6jENJuU9dE_toJqVSwiJOrqeBA7YiJiNnzJneJ7YBQYSWDOOd5Ig04NXCed3NTiZVwcy4GORK9JR2NJB-uQdFxVzv8ULHjmGKBWrFkAR_fJ0Eru98TdgJWh7SdwkeS3TFOAQ6KoCAN_BZu4jNe-Js7JabKs54aS62pZr1yPhbekajvYlBcFG_kgRaL6cTc4TmEx-91Ev32hkJHRONmPqpJKbeIHKx5Ws8OFwbJqAS8quNCIzLVEXccZ2st91Q1epPx2XSahHI"/>
+              <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-transparent to-transparent opacity-60"></div>
+              <div className="absolute bottom-8 left-8 right-8">
+                <h3 className="text-2xl font-bold text-white mb-2">Fashion</h3>
+                <p className="text-white/80 text-sm mb-4">Timeless essentials for the modern wardrobe.</p>
+                <span className="text-white font-semibold flex items-center gap-2 text-sm group-hover:translate-x-2 transition-transform">
+                  Shop Fashion <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+            <div className="group relative rounded-lg overflow-hidden h-[450px] bg-surface-container-low cursor-pointer">
+              <img alt="Home category" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoHSWuQ1sotKylLPS3RAfKwuhU844k9O-I-B7mExb4836Ley_aPH0bAKD4s6EdXVEUBnzxAXspSBKG41j-G_WHU3AA9EG5kFwqZ9CmFIjgrrwZyUnJhT5uvAaqMBnelYqbxJsM29TsEi_uxqgy6dY6ex6TDqnM0ev1aZvseIb4dn7S909leT4HdIbqZycKcBNp-F7g8LB9i8sBeSlmsNkFAhzdFDkabo9osTmgiNEcujlphVNRQll2GjeWxXUAatCXIaD0ZR6PQpk"/>
+              <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-transparent to-transparent opacity-60"></div>
+              <div className="absolute bottom-8 left-8 right-8">
+                <h3 className="text-2xl font-bold text-white mb-2">Home</h3>
+                <p className="text-white/80 text-sm mb-4">Elevated objects for your personal sanctuary.</p>
+                <span className="text-white font-semibold flex items-center gap-2 text-sm group-hover:translate-x-2 transition-transform">
+                  Shop Home <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Popular Products */}
+        <section className="py-16 px-6 bg-surface-container-low">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex justify-between items-center mb-12">
+              <h2 className="text-3xl font-bold text-on-surface tracking-tight">Popular Products</h2>
+              <div className="flex gap-2">
+                <button className="p-2 rounded-full bg-surface-container-lowest text-on-surface-variant hover:bg-white transition-all shadow-sm">
+                  <span className="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button className="p-2 rounded-full bg-surface-container-lowest text-on-surface-variant hover:bg-white transition-all shadow-sm">
+                  <span className="material-symbols-outlined">chevron_right</span>
+                </button>
+              </div>
+            </div>
+            <div className="flex overflow-x-auto gap-8 no-scrollbar pb-8">
+              {[
+                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBCSIGiOPxlnL2kvZND0SMJxdAEVKgtm0W3Bf7GGwuVoMuF1cyC-i1oTq9fxgixjWi_z0yD7amqK-YWS5CxGffSqQCxYOJG1xn0u7KNU9Z96MVFG2u4dyR0kHGFDm0lPsVIJ2OHY03d_hn7Eq-yND2ywEIa-j5whlux28f0Ica7e_NIYu0k_m1eFtDqGqVCF6bkgo8UHDpmLKbixQXMTYuVFOywtRW9gYs_ntMj3aEMU0vx4j0cRsxuearv8sAU56lOS_i8WO4JGv0", title: "Acoustic Pro Series X", desc: "High-fidelity wireless audio", price: "$349.00", badge: "New Arrival", badgeBg: "bg-[#dcfce7]", badgeText: "text-[#166534]"},
+                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBI3eUg2YvKfmT0jrOEgmwOYUGlrkX-JGsK9MKokrS4CLen1sxOf8KYBcxcyRjxgYs_ArcNmav2woEetFN6m8kiOX9P5vcP1fIKtGZmV3ThbUnPSC2KhjMl0MOi8hiWAvJ-t8RG67GKQp8OeDoV7W6CswdiCRYn1TpzzeBH_UgqbKA-TppxgqB6wUYl5eqMmYDYVu_UKwYh4Ov829Ip1IzTCwC1DyvLX9dHtBB7q_qZSJCgjet8PxNzfwoaff0JNFnal6shQg7M5BA", title: "Horizon Chronograph", desc: "Automatic movement, sapphire glass", price: "$890.00", badge: "Limited Edition", badgeBg: "bg-secondary-fixed", badgeText: "text-on-secondary-fixed-variant"},
+                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCMgx5kA24L3n1y-jqAtJjcKYxTSt3M3gRnvzk-pZCSxX4bItsBRpmD_yAk35z4cNCmgKIk69teb26Y0uuLLp90rqPj18mDlhhLT6sL6Mr_BHmKwH9Vf5Zhk07_6y-xnjghUSBdU9tDVR9CH8tzb1dhe7CEe3TM1k0aUH39mNJ2wHXPoISfj-s-Cm6ZloBWkpJq_So0Yk5aJh58nbRzkKVo4-sriLN0xaYvPHKX2gHv1UvLaKxIpjxTCtQ_tO614H50Uwf3Ph9qWb8", title: "Terra Artisan Vase", desc: "Handcrafted stonewear", price: "$125.00", badge: "Best Seller", badgeBg: "bg-primary-fixed", badgeText: "text-on-primary-fixed-variant"},
+                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAIPAi85sA_FGnT5bCB6kYDH7C6Dq9R5QNsoSoOaJZPob2zXAhpcr6RW1uYd3cI5CoRxv95TLWA_QaI4b17FS-EAnflfelldc3Nepbvayqxey8UV3iovN1NtFalEYD4FMdX0rEVZsFcHBSsxl_LPAkmRewiXoLGXzhQ2WEoP87ZY6xaxB47mfjXRkkU4CXEIgVVhLBJP950Tmnq4iltcV9Au02HqA44xyhW0dd77SrqYHOKsGWQd_9AxvzX6VV9oEhgSO6F-Qt8_bs", title: "Lumina Pro 14\"", desc: "M3 Pro equivalent chipset", price: "$1,899.00", badge: "Pre-Order", badgeBg: "bg-tertiary-fixed", badgeText: "text-on-tertiary-fixed-variant"}
+              ].map((prod, i) => (
+                <div key={i} className="flex-none w-[320px] group">
+                  <div className="bg-surface-container-lowest rounded-lg p-6 mb-4 transition-all duration-300 group-hover:shadow-[0px_20px_40px_rgba(25,28,29,0.06)] group-hover:-translate-y-1">
+                    <div className="relative h-[320px] overflow-hidden rounded-md bg-surface mb-6">
+                      <img alt={prod.title} className="w-full h-full object-contain p-8" src={prod.img} />
+                      <button className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full text-secondary hover:text-primary transition-colors">
+                        <span className="material-symbols-outlined text-xl">favorite</span>
+                      </button>
+                    </div>
+                    <span className={`inline-block px-3 py-1 rounded-full ${prod.badgeBg} ${prod.badgeText} text-[10px] font-bold uppercase tracking-widest mb-3`}>
+                      {prod.badge}
+                    </span>
+                    <h4 className="text-lg font-semibold text-on-surface mb-1">{prod.title}</h4>
+                    <p className="text-secondary text-sm mb-4">{prod.desc}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xl font-bold text-primary">{prod.price}</span>
+                      <button className="p-2 bg-primary rounded-full text-white hover:scale-110 active:scale-95 transition-all">
+                        <span className="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
                   </div>
-                  <span>Trusted by 10k+ users</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Philosophy */}
+        <section className="py-24 px-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="order-2 md:order-1">
+              <img alt="Our Philosophy" className="rounded-lg shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyoMnn08gDS1l4KUXXRfyHkS8nP3LwFz2CGXshlP5K_ny_7EsuX3RiKjDMyHFRBhhB50AHMgYHlQBgMP4hRBh8YS9-xrRK3iqpAkK_58RegS7nmh2fMwOv0By5r7SZOuTxQeNNMSoADLtikaGrwRQUWGu1OsDVRLaigWGZ8vSnM-hmV8aNQAKMTdMo155Tpe5THibLbPrddogedUYO84CuKgkCQJ_9luA393KBnrwkmp4H6q5OiuTg-V-BT82FwEYLnk-vnD6QAeE"/>
+            </div>
+            <div className="order-1 md:order-2">
+              <span className="text-primary font-bold tracking-widest text-xs uppercase mb-4 block">Our Philosophy</span>
+              <h2 className="text-4xl md:text-5xl font-bold text-on-surface tracking-tight mb-8 leading-tight">Curated with an eye for quality and intent.</h2>
+              <p className="text-lg text-secondary leading-relaxed mb-10">
+                We don't believe in endless scrolling. We believe in finding exactly what resonates. Every product in our catalog passes a rigorous test of durability, design integrity, and ethical production.
+              </p>
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                    <span className="material-symbols-outlined">verified</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-on-surface">Verified Quality</h4>
+                    <p className="text-on-surface-variant text-sm">Every item is checked for perfection.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                    <span className="material-symbols-outlined">eco</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-on-surface">Sustainably Sourced</h4>
+                    <p className="text-on-surface-variant text-sm">Reducing carbon footprints, one order at a time.</p>
+                  </div>
                 </div>
               </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="hidden md:flex justify-center relative"
-            >
-              <div className="w-80 h-96 bg-gradient-to-br from-primary to-accent rounded-3xl rotate-6 absolute top-0 -z-10 blur-2xl opacity-40"></div>
-              <div className="w-80 h-96 bg-slate-800 border border-slate-700 rounded-3xl shadow-2xl p-6 flex flex-col relative overflow-hidden group">
-                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl -z-1"></div>
-                 <div className="w-full aspect-square bg-slate-900 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
-                    <ShoppingBag className="w-24 h-24 text-slate-700 group-hover:scale-110 group-hover:text-primary transition-all duration-500" />
-                 </div>
-                 <div className="space-y-4">
-                    <div className="h-4 w-3/4 bg-slate-700 rounded-full"></div>
-                    <div className="h-4 w-1/2 bg-slate-700 rounded-full"></div>
-                    <div className="flex justify-between items-center pt-4 border-t border-slate-700">
-                      <div className="h-6 w-20 bg-primary/30 rounded-full"></div>
-                      <div className="h-10 w-10 bg-slate-700 rounded-lg"></div>
-                    </div>
-                 </div>
-              </div>
-            </motion.div>
+            </div>
           </div>
-        </div>
-        
-        {/* Features Row */}
-        <div className="absolute bottom-0 inset-x-0 bg-white/5 backdrop-blur-sm border-t border-white/10 hidden md:block">
-           <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-3 gap-8">
-              <div className="flex items-center gap-4">
-                 <div className="p-2 rounded-lg bg-primary/10 text-primary"><ShieldCheck className="w-6 h-6" /></div>
-                 <div>
-                    <h4 className="font-bold">Escrow Protection</h4>
-                    <p className="text-xs text-slate-400">Guaranteed secure transactions</p>
-                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                 <div className="p-2 rounded-lg bg-accent/10 text-accent"><Truck className="w-6 h-6" /></div>
-                 <div>
-                    <h4 className="font-bold">Fast Delivery</h4>
-                    <p className="text-xs text-slate-400">Doorstep delivery nationwide</p>
-                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                 <div className="p-2 rounded-lg bg-secondary/10 text-secondary"><ShoppingBag className="w-6 h-6" /></div>
-                 <div>
-                    <h4 className="font-bold">Premium Quality</h4>
-                    <p className="text-xs text-slate-400">Curated products for you</p>
-                 </div>
-              </div>
-           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Main Content */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        {/* Subscribe */}
+        <section className="py-24 px-6 bg-on-background text-white rounded-t-xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 p-24 opacity-10 pointer-events-none">
+            <span className="material-symbols-outlined text-[300px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_bag</span>
+          </div>
+          <div className="max-w-3xl mx-auto text-center relative z-10">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Join the inner circle.</h2>
+            <p className="text-white/60 text-lg mb-10">Get early access to limited collections and private sales.</p>
+            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <input className="flex-1 bg-white/10 border border-white/20 rounded-full px-6 py-4 text-white placeholder:text-white/40 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Enter your email" type="email"/>
+              <button className="bg-white text-on-background px-8 py-4 rounded-full font-bold hover:bg-slate-100 transition-colors">
+                Subscribe
+              </button>
+            </div>
+            <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] mt-8">By subscribing, you agree to our Terms and Privacy Policy.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer className="bg-surface-container px-6 py-16">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12">
+          <div className="col-span-2 md:col-span-1">
+            <span className="text-xl font-bold tracking-tighter text-on-surface block mb-6">CuratorCommerce</span>
+            <p className="text-secondary text-sm leading-relaxed mb-6">Redefining the digital shopping experience through intentional design and premium curation.</p>
+            <div className="flex gap-4">
+              <a className="text-secondary hover:text-primary transition-colors" href="#"><span className="material-symbols-outlined">public</span></a>
+              <a className="text-secondary hover:text-primary transition-colors" href="#"><span className="material-symbols-outlined">alternate_email</span></a>
+            </div>
+          </div>
           <div>
-            <h2 className="text-3xl md:text-5xl font-black mb-4">New Arrivals</h2>
-            <p className="text-muted text-lg max-w-xl">
-              Discover the latest trends and essential products selected just for you.
-            </p>
+            <h4 className="font-bold text-on-surface mb-6 uppercase text-xs tracking-widest">Shop</h4>
+            <ul className="space-y-4 text-sm text-on-surface-variant">
+              <li><Link className="hover:text-primary transition-colors" href="#">All Products</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Featured</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">New Arrivals</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Discounts</Link></li>
+            </ul>
           </div>
-          <div className="flex gap-4">
-            <button className="px-6 py-2 border border-border rounded-lg text-sm font-bold hover:bg-card transition-colors">Filters</button>
-            <select className="px-6 py-2 border border-border rounded-lg text-sm font-bold bg-transparent outline-none">
-              <option>Sort by: Newest</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-            </select>
+          <div>
+            <h4 className="font-bold text-on-surface mb-6 uppercase text-xs tracking-widest">Support</h4>
+            <ul className="space-y-4 text-sm text-on-surface-variant">
+              <li><Link className="hover:text-primary transition-colors" href="#">Help Center</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Shipping Info</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Returns</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Track Order</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold text-on-surface mb-6 uppercase text-xs tracking-widest">Company</h4>
+            <ul className="space-y-4 text-sm text-on-surface-variant">
+              <li><Link className="hover:text-primary transition-colors" href="#">About Us</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Our Process</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Journal</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Careers</Link></li>
+            </ul>
           </div>
         </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="aspect-[4/5] bg-card/50 rounded-xl animate-pulse flex flex-col p-4 gap-4">
-                <div className="w-full aspect-square bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
-                <div className="h-4 w-3/4 bg-slate-200 dark:bg-slate-800 rounded-full"></div>
-                <div className="h-8 w-1/2 bg-slate-200 dark:bg-slate-800 rounded-full"></div>
-              </div>
-            ))}
+        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest text-outline">
+          <p>© 2024 CuratorCommerce. All rights reserved.</p>
+          <div className="flex gap-8">
+            <Link className="hover:text-primary" href="#">Privacy Policy</Link>
+            <Link className="hover:text-primary" href="#">Terms of Service</Link>
+            <Link className="hover:text-primary" href="#">Cookie Settings</Link>
           </div>
-        ) : products.length === 0 ? (
-          <div className="text-center py-20 bg-card rounded-3xl border border-dashed border-border">
-            <ShoppingBag className="w-16 h-16 text-muted mx-auto mb-4 opacity-50" />
-            <h3 className="text-xl font-bold mb-2">No products found</h3>
-            <p className="text-muted">Stay tuned, new arrivals are coming soon!</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Footer */}
-      <footer className="mt-auto bg-card border-t border-border py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-muted text-sm">© 2026 NNM E-commerce Shop. Powered by Chapa Secure Escrow.</p>
         </div>
       </footer>
-    </main>
+
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md z-50 flex justify-around items-center px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+        <button className="flex flex-col items-center gap-1 text-primary">
+          <span className="material-symbols-outlined">home</span>
+          <span className="text-[10px] font-bold">Home</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-secondary">
+          <span className="material-symbols-outlined">grid_view</span>
+          <span className="text-[10px] font-bold">Explore</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-secondary">
+          <span className="material-symbols-outlined">shopping_cart</span>
+          <span className="text-[10px] font-bold">Cart</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-secondary">
+          <span className="material-symbols-outlined">person</span>
+          <span className="text-[10px] font-bold">Account</span>
+        </button>
+      </div>
+    </div>
   );
 }
