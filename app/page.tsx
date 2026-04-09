@@ -1,9 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import api from '@/lib/api';
 
 export default function Home() {
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPopular = async () => {
+      try {
+        const { data } = await api.get('/products');
+        setProducts(data.slice(0, 4)); // Just show top 4
+      } catch (err) {
+        console.error('Failed to fetch popular products', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPopular();
+  }, []);
+
   return (
     <div className="bg-surface font-body text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
       <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none font-sans antialiased tracking-tight">
@@ -122,35 +140,47 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <div className="flex overflow-x-auto gap-8 no-scrollbar pb-8">
-              {[
-                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBCSIGiOPxlnL2kvZND0SMJxdAEVKgtm0W3Bf7GGwuVoMuF1cyC-i1oTq9fxgixjWi_z0yD7amqK-YWS5CxGffSqQCxYOJG1xn0u7KNU9Z96MVFG2u4dyR0kHGFDm0lPsVIJ2OHY03d_hn7Eq-yND2ywEIa-j5whlux28f0Ica7e_NIYu0k_m1eFtDqGqVCF6bkgo8UHDpmLKbixQXMTYuVFOywtRW9gYs_ntMj3aEMU0vx4j0cRsxuearv8sAU56lOS_i8WO4JGv0", title: "Acoustic Pro Series X", desc: "High-fidelity wireless audio", price: "$349.00", badge: "New Arrival", badgeBg: "bg-[#dcfce7]", badgeText: "text-[#166534]"},
-                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBI3eUg2YvKfmT0jrOEgmwOYUGlrkX-JGsK9MKokrS4CLen1sxOf8KYBcxcyRjxgYs_ArcNmav2woEetFN6m8kiOX9P5vcP1fIKtGZmV3ThbUnPSC2KhjMl0MOi8hiWAvJ-t8RG67GKQp8OeDoV7W6CswdiCRYn1TpzzeBH_UgqbKA-TppxgqB6wUYl5eqMmYDYVu_UKwYh4Ov829Ip1IzTCwC1DyvLX9dHtBB7q_qZSJCgjet8PxNzfwoaff0JNFnal6shQg7M5BA", title: "Horizon Chronograph", desc: "Automatic movement, sapphire glass", price: "$890.00", badge: "Limited Edition", badgeBg: "bg-secondary-fixed", badgeText: "text-on-secondary-fixed-variant"},
-                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCMgx5kA24L3n1y-jqAtJjcKYxTSt3M3gRnvzk-pZCSxX4bItsBRpmD_yAk35z4cNCmgKIk69teb26Y0uuLLp90rqPj18mDlhhLT6sL6Mr_BHmKwH9Vf5Zhk07_6y-xnjghUSBdU9tDVR9CH8tzb1dhe7CEe3TM1k0aUH39mNJ2wHXPoISfj-s-Cm6ZloBWkpJq_So0Yk5aJh58nbRzkKVo4-sriLN0xaYvPHKX2gHv1UvLaKxIpjxTCtQ_tO614H50Uwf3Ph9qWb8", title: "Terra Artisan Vase", desc: "Handcrafted stonewear", price: "$125.00", badge: "Best Seller", badgeBg: "bg-primary-fixed", badgeText: "text-on-primary-fixed-variant"},
-                {img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAIPAi85sA_FGnT5bCB6kYDH7C6Dq9R5QNsoSoOaJZPob2zXAhpcr6RW1uYd3cI5CoRxv95TLWA_QaI4b17FS-EAnflfelldc3Nepbvayqxey8UV3iovN1NtFalEYD4FMdX0rEVZsFcHBSsxl_LPAkmRewiXoLGXzhQ2WEoP87ZY6xaxB47mfjXRkkU4CXEIgVVhLBJP950Tmnq4iltcV9Au02HqA44xyhW0dd77SrqYHOKsGWQd_9AxvzX6VV9oEhgSO6F-Qt8_bs", title: "Lumina Pro 14\"", desc: "M3 Pro equivalent chipset", price: "$1,899.00", badge: "Pre-Order", badgeBg: "bg-tertiary-fixed", badgeText: "text-on-tertiary-fixed-variant"}
-              ].map((prod, i) => (
-                <div key={i} className="flex-none w-[320px] group">
-                  <div className="bg-surface-container-lowest rounded-lg p-6 mb-4 transition-all duration-300 group-hover:shadow-[0px_20px_40px_rgba(25,28,29,0.06)] group-hover:-translate-y-1">
-                    <div className="relative h-[320px] overflow-hidden rounded-md bg-surface mb-6">
-                      <img alt={prod.title} className="w-full h-full object-contain p-8" src={prod.img} />
-                      <button className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full text-secondary hover:text-primary transition-colors">
-                        <span className="material-symbols-outlined text-xl">favorite</span>
-                      </button>
-                    </div>
-                    <span className={`inline-block px-3 py-1 rounded-full ${prod.badgeBg} ${prod.badgeText} text-[10px] font-bold uppercase tracking-widest mb-3`}>
-                      {prod.badge}
-                    </span>
-                    <h4 className="text-lg font-semibold text-on-surface mb-1">{prod.title}</h4>
-                    <p className="text-secondary text-sm mb-4">{prod.desc}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-primary">{prod.price}</span>
-                      <button className="p-2 bg-primary rounded-full text-white hover:scale-110 active:scale-95 transition-all">
-                        <span className="material-symbols-outlined">add_shopping_cart</span>
-                      </button>
-                    </div>
-                  </div>
+            <div className="flex overflow-x-auto gap-8 no-scrollbar pb-8 min-h-[400px]">
+              {loading ? (
+                <div className="w-full flex flex-col items-center justify-center p-20">
+                   <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
+                   <p className="text-secondary font-medium tracking-tight">Loading curated collection...</p>
                 </div>
-              ))}
+              ) : products.length > 0 ? (
+                products.map((prod, i) => (
+                  <div key={prod._id || i} className="flex-none w-[320px] group">
+                    <Link href={`/products/${prod._id}`} className="block">
+                      <div className="bg-surface-container-lowest rounded-lg p-6 mb-4 transition-all duration-300 group-hover:shadow-[0px_20px_40px_rgba(25,28,29,0.06)] group-hover:-translate-y-1">
+                        <div className="relative h-[320px] overflow-hidden rounded-md bg-white mb-6">
+                          <img 
+                            alt={prod.name} 
+                            className="w-full h-full object-contain p-8 transition-transform duration-500 group-hover:scale-105" 
+                            src={prod.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80'} 
+                          />
+                          <button className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full text-secondary hover:text-primary transition-colors">
+                            <span className="material-symbols-outlined text-xl">favorite</span>
+                          </button>
+                        </div>
+                        <span className={`inline-block px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-bold uppercase tracking-widest mb-3`}>
+                          {prod.category}
+                        </span>
+                        <h4 className="text-lg font-semibold text-on-surface mb-1 truncate">{prod.name}</h4>
+                        <p className="text-secondary text-sm mb-4 line-clamp-1">{prod.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xl font-bold text-primary">${prod.price.toFixed(2)}</span>
+                          <button className="p-2 bg-primary rounded-full text-white hover:scale-110 active:scale-95 transition-all">
+                            <span className="material-symbols-outlined">add_shopping_cart</span>
+                          </button>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <div className="w-full text-center py-20 text-secondary">
+                  No products available at the moment.
+                </div>
+              )}
             </div>
           </div>
         </section>

@@ -69,9 +69,7 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
         quantity,
       });
 
-      const { data: paymentData } = await api.post('/payments/initialize', {
-        order_id: orderData._id,
-      });
+      const { data: paymentData } = await api.post(`/payments/initialize/${orderData._id}`);
 
       if (paymentData.checkout_url) {
         window.location.href = paymentData.checkout_url;

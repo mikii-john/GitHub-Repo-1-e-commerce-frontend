@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
-import { mockProducts } from '@/lib/mockData';
+import api from '@/lib/api';
 import {
   Search,
   Heart,
@@ -16,75 +16,8 @@ import {
   X,
 } from 'lucide-react';
 
-// ─── Extended mock products for a richer listing ────────────────────────────
-const allProducts = [
-  ...mockProducts,
-  {
-    _id: 'p7',
-    name: 'Obsidian Glass Vessel',
-    description: 'Architectural hand-blown glass vase with organic silhouette.',
-    price: 185,
-    category: 'Home & Living',
-    imageUrl: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=800&q=80',
-    stock: 8,
-    seller_id: 's1',
-  },
-  {
-    _id: 'p8',
-    name: 'Ghost Edition MK-01',
-    description: 'Tactile typing experience with silent linear switches.',
-    price: 225,
-    category: 'Electronics',
-    imageUrl: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&q=80',
-    stock: 20,
-    seller_id: 's2',
-  },
-  {
-    _id: 'p9',
-    name: 'Brutalist Table Lamp',
-    description: 'Organic concrete and steel lamp with warm amber glow.',
-    price: 310,
-    category: 'Home & Living',
-    imageUrl: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&q=80',
-    stock: 14,
-    seller_id: 's1',
-  },
-  {
-    _id: 'p10',
-    name: 'Digital Slate Ultra',
-    description: 'Pro creative tablet with 4K display and stylus support.',
-    price: 960,
-    category: 'Electronics',
-    imageUrl: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&q=80',
-    stock: 6,
-    seller_id: 's2',
-    originalPrice: 1200,
-  },
-  {
-    _id: 'p11',
-    name: 'Studio-One Headphones',
-    description: 'Professional over-ear headphones with reference-grade audio.',
-    price: 450,
-    category: 'Electronics',
-    imageUrl: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&q=80',
-    stock: 22,
-    seller_id: 's1',
-  },
-  {
-    _id: 'p12',
-    name: 'Mono Series Watch 01',
-    description: 'Minimal analog watch with Swiss movement and sapphire glass.',
-    price: 299,
-    category: 'Accessories',
-    imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-    stock: 34,
-    seller_id: 's2',
-    badge: 'New Arrival',
-  },
-];
-
-// Unique categories from data
-const CATEGORIES = ['All', ...Array.from(new Set(allProducts.map((p) => p.category)))];
+// Remove allProducts static list as we'll fetch from API
+const CATEGORIES_FALLBACK = ['All', 'Electronics', 'Fashion', 'Home & Living', 'Accessories'];
 const SORT_OPTIONS = ['Newest', 'Price: Low-High', 'Price: High-Low', 'Rating'] as const;
 type SortOption = (typeof SORT_OPTIONS)[number];
 
@@ -197,6 +130,9 @@ const ProductCard = ({ product }: { product: ProductData }) => {
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function ProductListingPage() {
+  const [products, setProducts] = useState<ProductData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>(['All']);
   const [priceMax, setPriceMax] = useState(2500);
   const [sortBy, setSortBy] = useState<SortOption>('Newest');
@@ -204,6 +140,29 @@ export default function ProductListingPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [minRating, setMinRating] = useState(0);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await api.get('/products');
+        setProducts(data);
+        setError('');
+      } catch (err: any) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products. Using fallback data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const categoriesFromData = useMemo(() => {
+    return ['All', ...Array.from(new Set(products.map((p) => p.category)))];
+  }, [products]);
+
+  const categories = products.length > 0 ? categoriesFromData : CATEGORIES_FALLBACK;
 
   const toggleCategory = (cat: string) => {
     if (cat === 'All') {
@@ -222,7 +181,7 @@ export default function ProductListingPage() {
   };
 
   const filteredProducts = useMemo(() => {
-    let items = [...allProducts] as ProductData[];
+    let items = [...products] as ProductData[];
 
     if (!selectedCategories.includes('All')) {
       items = items.filter((p) => selectedCategories.includes(p.category));
@@ -271,7 +230,7 @@ export default function ProductListingPage() {
           Categories
         </h3>
         <div className="space-y-2.5">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <label key={cat} className="flex items-center gap-3 cursor-pointer group">
               <input
                 type="checkbox"
@@ -409,8 +368,7 @@ export default function ProductListingPage() {
                 All Products
               </h1>
               <p className="text-[#434655] text-sm font-medium">
-                Showing {Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, filteredProducts.length)}–
-                {Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)} of {filteredProducts.length} results
+                {loading ? 'Refreshing collections...' : `Showing ${Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, filteredProducts.length)}–${Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)} of ${filteredProducts.length} results`}
               </p>
             </div>
 
@@ -455,48 +413,68 @@ export default function ProductListingPage() {
             </div>
           </div>
 
-          {/* Mobile sort — dropdown select */}
-          <div className="sm:hidden mb-5">
-            <select
-              value={sortBy}
-              onChange={(e) => { setSortBy(e.target.value as SortOption); setCurrentPage(1); }}
-              className="w-full py-2.5 px-4 bg-white border border-[#c3c6d7] rounded-full text-sm font-bold text-[#434655] focus:outline-none focus:ring-2 focus:ring-[#004ac6]/20"
-            >
-              {SORT_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Product Grid */}
-          {paginatedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedProducts.map((product) => (
-                <ProductCard key={product._id} product={product as ProductData} />
-              ))}
+          {/* Loading / Error / Content */}
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-32">
+              <div className="w-12 h-12 border-4 border-[#004ac6]/20 border-t-[#004ac6] rounded-full animate-spin mb-4"></div>
+              <p className="text-[#434655] font-medium">Curating Products...</p>
             </div>
+          ) : error ? (
+             <div className="bg-red-50 border border-red-100 p-8 rounded-2xl text-center">
+                <p className="text-red-600 font-bold mb-4">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="px-6 py-2 bg-red-600 text-white rounded-full text-sm font-bold"
+                >
+                  Retry Connection
+                </button>
+             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-32 text-center">
-              <div className="w-20 h-20 bg-[#f3f4f5] rounded-full flex items-center justify-center mb-6">
-                <Search className="w-8 h-8 text-[#737686]" />
+            <>
+              {/* Mobile sort — dropdown select */}
+              <div className="sm:hidden mb-5">
+                <select
+                  value={sortBy}
+                  onChange={(e) => { setSortBy(e.target.value as SortOption); setCurrentPage(1); }}
+                  className="w-full py-2.5 px-4 bg-white border border-[#c3c6d7] rounded-full text-sm font-bold text-[#434655] focus:outline-none focus:ring-2 focus:ring-[#004ac6]/20"
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
               </div>
-              <h3 className="text-xl font-black text-[#191c1d] mb-2">No products found</h3>
-              <p className="text-[#434655] text-sm mb-8">
-                Try adjusting your filters or search query.
-              </p>
-              <button
-                onClick={() => {
-                  setSelectedCategories(['All']);
-                  setPriceMax(2500);
-                  setSearchQuery('');
-                  setMinRating(0);
-                  setCurrentPage(1);
-                }}
-                className="px-6 py-3 bg-[#004ac6] text-white rounded-full text-sm font-bold hover:bg-[#003ea8] transition-colors"
-              >
-                Clear All Filters
-              </button>
-            </div>
+
+              {/* Product Grid */}
+              {paginatedProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {paginatedProducts.map((product) => (
+                    <ProductCard key={product._id} product={product as ProductData} />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-32 text-center">
+                  <div className="w-20 h-20 bg-[#f3f4f5] rounded-full flex items-center justify-center mb-6">
+                    <Search className="w-8 h-8 text-[#737686]" />
+                  </div>
+                  <h3 className="text-xl font-black text-[#191c1d] mb-2">No products found</h3>
+                  <p className="text-[#434655] text-sm mb-8">
+                    Try adjusting your filters or search query.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSelectedCategories(['All']);
+                      setPriceMax(2500);
+                      setSearchQuery('');
+                      setMinRating(0);
+                      setCurrentPage(1);
+                    }}
+                    className="px-6 py-3 bg-[#004ac6] text-white rounded-full text-sm font-bold hover:bg-[#003ea8] transition-colors"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
           {/* Pagination */}

@@ -27,6 +27,7 @@ import {
 import { motion } from 'framer-motion';
 import api from '@/lib/api';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 import { mockOrders } from '@/lib/mockData';
 
 interface Order {
@@ -55,9 +56,14 @@ const SidebarLink = ({ icon: Icon, label, active = false }: { icon: any, label: 
 );
 
 export default function BuyerDashboard() {
+  const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState<string | null>(null);
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,15 +97,15 @@ export default function BuyerDashboard() {
   const stats = [
     { 
       label: 'Total Spent', 
-      value: '$12,450.00', 
+      value: orders.length > 0 ? `$${orders.reduce((acc, o) => acc + o.total_amount, 0).toLocaleString()}` : '$0.00', 
       change: '+12% vs last month', 
       icon: CreditCard, 
       color: 'bg-blue-100 text-blue-600' 
     },
     { 
-      label: 'Active Orders', 
-      value: '08', 
-      change: '3 in transit', 
+      label: 'Orders', 
+      value: orders.length.toString().padStart(2, '0'), 
+      change: `${orders.filter(o => o.status !== 'Delivered').length} in progress`, 
       icon: Truck, 
       color: 'bg-purple-100 text-purple-600' 
     },
@@ -125,12 +131,12 @@ export default function BuyerDashboard() {
 
           <div className="mt-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-                AC
+              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                {user ? getInitials(user.name) : '??'}
               </div>
               <div>
-                <p className="text-xs font-bold">Alex Curator</p>
-                <p className="text-[10px] text-slate-500 font-medium tracking-tight">Elite Buyer</p>
+                <p className="text-xs font-bold truncate max-w-[100px]">{user?.name || 'Guest Buyer'}</p>
+                <p className="text-[10px] text-slate-500 font-medium tracking-tight uppercase">Buyer Account</p>
               </div>
             </div>
             <button className="w-full py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors">
@@ -148,7 +154,7 @@ export default function BuyerDashboard() {
               animate={{ opacity: 1, x: 0 }}
             >
               <h1 className="text-3xl font-black tracking-tight text-slate-900">Buyer Overview</h1>
-              <p className="text-slate-500 font-medium">Welcome back, Alex. Your recent orders are on the way.</p>
+              <p className="text-slate-500 font-medium">Welcome back, {user?.name.split(' ')[0]}. Your recent orders are shown below.</p>
             </motion.div>
             
             <div className="flex items-center gap-3">
@@ -330,7 +336,7 @@ export default function BuyerDashboard() {
                   <div className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-slate-400" />
-                      <span className="text-xs font-bold text-slate-600">alex.c@curator.com</span>
+                      <span className="text-xs font-bold text-slate-600">{user?.email || 'email@example.com'}</span>
                     </div>
                     <span className="text-[9px] font-black bg-green-100 text-green-700 px-2 py-0.5 rounded uppercase tracking-tighter">Verified</span>
                   </div>

@@ -36,10 +36,17 @@ export default function AuthPage() {
       const endpoint = isLogin ? '/auth/login' : '/auth/register';
       const { data } = await api.post(endpoint, formData);
       
-      const { token, user } = data;
+      const token = data.token;
+      const user = data.user || {
+        _id: data._id,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+      };
+      
       login(token, user);
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || err.message || 'Something went wrong. Please try again.';
       setError(errorMsg);
     } finally {
       setLoading(false);

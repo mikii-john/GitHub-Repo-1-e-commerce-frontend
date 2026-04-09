@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as mockData from './mockData';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-const MOCK_MODE = true; // Force Mock Mode
+const MOCK_MODE = false; // Connect to Backend
 
 const api = axios.create({
   baseURL: API_URL,
@@ -54,7 +54,7 @@ api.interceptors.request.use(async (config) => {
         payment_status: 'Unpaid',
         ...JSON.parse(config.data) 
       };
-    } else if (config.url === '/payments/initialize' && config.method === 'post') {
+    } else if (config.url?.startsWith('/payments/initialize/') && config.method === 'post') {
       data = { 
         checkout_url: '/dashboard/buyer?status=mock-payment-success',
         status: 'success'
