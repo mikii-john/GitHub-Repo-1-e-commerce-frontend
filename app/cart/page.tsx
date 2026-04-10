@@ -2,50 +2,87 @@
 
 import React, { useState } from 'react';
 import { ShoppingBag, Truck, Wallet, Lock, ArrowRight, CheckCircle2, History, ShieldCheck, Headphones } from 'lucide-react';
-import { mockProducts } from '@/lib/mockData';
+import api from '@/lib/api';
 import CheckoutItem from '@/components/checkout/CheckoutItem';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
+
+import { useAuth } from '@/context/AuthContext';
 
 const CartPage = () => {
-  const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState<'mobile' | 'card'>('mobile');
   
-  // Using mock data for demo
-  const cartItems = [
-    { ...mockProducts[0], quantity: 1 }, // Headphones
-    { ...mockProducts[1], quantity: 1 }, // Watch
-  ];
+  const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const shipping = 20.00;
-  const taxes = 45.00;
+  const shipping = subtotal > 0 ? 20.00 : 0;
+  const taxes = subtotal > 0 ? 45.00 : 0;
   const total = subtotal + shipping + taxes;
 
-  const handleCompletePurchase = () => {
-    // Mocking purchase completion
-    alert('Mock Purchase Successful! Your order is being processed.');
-    router.push('/dashboard/buyer');
+  const [buying, setBuying] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleCompletePurchase = async () => {
+    if (!isAuthenticated) {
+      window.location.href = '/auth?redirect=/cart';
+      return;
+    }
+
+    setBuying(true);
+    setError('');
+    try {
+      const orderData = {
+        orderItems: cartItems.map(i => ({ product: i._id, qty: i.quantity })),
+        shippingAddress: { address: "Address Info pending", city: "City Info pending" },
+        paymentMethod: paymentMethod === 'mobile' ? 'Mobile Money' : 'Card',
+        itemsPrice: subtotal,
+        taxPrice: taxes,
+        shippingPrice: shipping,
+        totalPrice: total
+      };
+      
+      const { data: newOrder } = await api.post('/orders', orderData);
+      
+      const { data: paymentData } = await api.post(`/payments/initialize/${newOrder._id}`);
+      
+      if (paymentData.checkout_url) {
+        clearCart();
+        window.location.href = paymentData.checkout_url;
+      } else {
+        throw new Error('Payment initialization failed');
+      }
+    } catch (err) {
+      console.error('Checkout failed', err);
+      // @ts-expect-error error is unknown
+      setError(err?.response?.data?.message || err?.message || 'Payment initialization failed. Please try again.');
+    } finally {
+      setBuying(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-surface text-on-surface antialiased">
-      {/* Navigation Mock (Usually shared - updated with back to home) */}
+      {/* Navigation (Usually shared - updated with back to home) */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm border-b border-outline-variant/30">
         <div className="flex justify-between items-center px-6 py-3 max-w-7xl mx-auto">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-2xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">CuratorCommerce</Link>
+            <Link href="/" className="text-2xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">Adare Shop</Link>
             <div className="hidden md:flex gap-6 items-center text-sm font-medium">
               <Link className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all font-bold text-primary border-b-2 border-primary" href="/cart">Cart</Link>
-              <a className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all" href="#">Categories</a>
-              <a className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all" href="#">Deals</a>
+              <Link className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all" href="/products">Categories</Link>
+              <Link className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all" href="/products">Deals</Link>
             </div>
           </div>
           <div className="flex items-center gap-4">
              <Link href="/" className="text-xs font-bold text-outline hover:text-primary transition-colors">Return to Shop</Link>
              <div className="relative p-2 bg-surface-container rounded-full text-primary">
               <ShoppingBag size={20} />
-              <span className="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">2</span>
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                  {cartItems.length}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -85,20 +122,31 @@ const CartPage = () => {
               </div>
               
               <div className="space-y-4">
-                {cartItems.map((item) => (
-                  <CheckoutItem 
-                    key={item._id}
-                    name={item.name}
-                    category={item.category}
-                    price={item.price}
-                    imageUrl={item.imageUrl}
-                    quantity={item.quantity}
-                  />
-                ))}
+                {cartItems.length === 0 ? (
+                  <div className="text-center py-12 text-secondary">
+                    <ShoppingBag className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                    <p className="text-lg font-medium">Your cart is empty.</p>
+                    <Link href="/products" className="inline-block mt-4 text-primary font-bold hover:underline">Continue Shopping</Link>
+                  </div>
+                ) : (
+                  cartItems.map((item) => (
+                    <CheckoutItem 
+                      key={item._id}
+                      id={item._id}
+                      name={item.name}
+                      category={item.category}
+                      price={item.price}
+                      imageUrl={item.imageUrl}
+                      quantity={item.quantity}
+                      onUpdateQuantity={updateQuantity}
+                      onRemove={removeFromCart}
+                    />
+                  ))
+                )}
               </div>
             </section>
 
-            {/* Section: Shipping (MOCKED as part of cart flow) */}
+            {/* Section: Shipping (as part of cart flow) */}
             <section className="bg-surface-container-low p-8 rounded-xl shadow-sm border border-outline-variant/20">
               <h2 className="text-2xl font-bold tracking-tight mb-6 flex items-center gap-3">
                 <Truck className="text-primary" />
@@ -124,7 +172,7 @@ const CartPage = () => {
               </form>
             </section>
 
-            {/* Section: Payment Hub (Chapa Mock) */}
+            {/* Section: Payment Hub (Chapa) */}
             <section className="bg-surface-container-low p-8 rounded-xl shadow-sm border border-outline-variant/20">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
@@ -137,7 +185,7 @@ const CartPage = () => {
               </div>
               
               <div className="space-y-4">
-                <p className="text-sm text-secondary mb-4 leading-relaxed">Choose how you'd like to pay. Your transaction is held in secure escrow for your protection.</p>
+                <p className="text-sm text-secondary mb-4 leading-relaxed">Choose how you&apos;d like to pay. Your transaction is held in secure escrow for your protection.</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Mobile Money */}
@@ -192,34 +240,48 @@ const CartPage = () => {
               <section className="bg-surface-container-high p-10 rounded-2xl shadow-2xl border border-outline-variant/30 overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -z-10 rounded-full"></div>
                 <h3 className="text-2xl font-black tracking-tighter mb-10">Order Summary</h3>
+                
+                {error && (
+                  <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100 mb-6 flex items-center justify-center text-center">
+                    {error}
+                  </div>
+                )}
+
                 <div className="space-y-6 mb-10">
                   <div className="flex justify-between text-secondary">
                     <span className="text-sm font-medium tracking-tight">Subtotal</span>
-                    <span className="text-md font-black text-on-surface">${subtotal.toFixed(2)}</span>
+                    <span className="text-md font-black text-on-surface">Birr {subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-secondary">
                     <span className="text-sm font-medium tracking-tight">Standard Shipping</span>
-                    <span className="text-md font-black text-on-surface">${shipping.toFixed(2)}</span>
+                    <span className="text-md font-black text-on-surface">Birr {shipping.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-secondary">
                     <span className="text-sm font-medium tracking-tight">Tax Estimate</span>
-                    <span className="text-md font-black text-on-surface">${taxes.toFixed(2)}</span>
+                    <span className="text-md font-black text-on-surface">Birr {taxes.toFixed(2)}</span>
                   </div>
                   <div className="pt-8 border-t border-outline-variant/30 flex justify-between items-end">
                     <div>
                       <span className="block text-[10px] font-black uppercase text-secondary tracking-widest mb-1">Final Amount</span>
-                      <span className="text-sm font-medium text-secondary">(USD Incl. Tax)</span>
+                      <span className="text-sm font-medium text-secondary">(Birr Incl. Tax)</span>
                     </div>
-                    <span className="text-4xl font-black text-primary tracking-tighter">${total.toLocaleString()}</span>
+                    <span className="text-4xl font-black text-primary tracking-tighter">Birr {total.toLocaleString()}</span>
                   </div>
                 </div>
 
                 <button 
                   onClick={handleCompletePurchase}
-                  className="w-full py-6 rounded-2xl bg-linear-to-br from-primary to-primary-container text-on-primary font-black text-lg shadow-2xl shadow-primary/40 hover:shadow-primary/60 hover:scale-[1.03] active:scale-95 transition-all flex items-center justify-center gap-4 group mb-8"
+                  disabled={buying || cartItems.length === 0}
+                  className="w-full py-6 rounded-2xl bg-linear-to-br from-primary to-primary-container text-on-primary font-black text-lg shadow-2xl shadow-primary/40 hover:shadow-primary/60 hover:scale-[1.03] active:scale-95 transition-all flex items-center justify-center gap-4 group mb-8 disabled:opacity-70 disabled:pointer-events-none"
                 >
-                  Pay Securely Now
-                  <ArrowRight className="group-hover:translate-x-1.5 transition-transform" size={24} />
+                  {buying ? (
+                    <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      Pay Securely Now
+                      <ArrowRight className="group-hover:translate-x-1.5 transition-transform" size={24} />
+                    </>
+                  )}
                 </button>
 
                 <div className="flex items-center gap-3 justify-center text-[10px] font-bold text-secondary uppercase tracking-widest opacity-60">
@@ -257,8 +319,8 @@ const CartPage = () => {
       {/* Simplified Footer */}
       <footer className="mt-20 py-16 bg-surface-container-low border-t border-outline-variant/30">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <span className="text-2xl font-black tracking-tighter text-slate-900 block mb-4">CuratorCommerce</span>
-          <p className="text-sm text-secondary max-w-lg mx-auto leading-relaxed mb-10">Experience the world's most curated editorial shopping marketplace, powered by secure blockchain-ready escrow payments.</p>
+          <span className="text-2xl font-black tracking-tighter text-slate-900 block mb-4">Adare Shop</span>
+          <p className="text-sm text-secondary max-w-lg mx-auto leading-relaxed mb-10">Experience the world&apos;s most curated editorial shopping marketplace, powered by secure blockchain-ready escrow payments.</p>
           <div className="flex justify-center gap-10 text-xs font-black uppercase text-outline tracking-widest">
             <a className="hover:text-primary transition-colors" href="#">Privacy</a>
             <a className="hover:text-primary transition-colors" href="#">Terms</a>

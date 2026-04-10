@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { useAuth } from '@/context/AuthContext';
 import {
   LayoutDashboard,
   Package2,
@@ -26,7 +27,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import api from '@/lib/api';
-import { mockProducts, mockOrders } from '@/lib/mockData';
 
 /* ─────────────────────────────── Types ──────────────────────────────── */
 interface Product {
@@ -55,14 +55,16 @@ const SidebarLink = ({
   icon: Icon,
   label,
   active = false,
+  onClick,
 }: {
   icon: React.ElementType;
   label: string;
   active?: boolean;
+  onClick?: () => void;
 }) => (
-  <Link
-    href="#"
-    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all hover:scale-[1.02] ${
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center justify-start gap-3 px-3 py-2.5 text-sm font-medium transition-all hover:scale-[1.02] ${
       active
         ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600'
         : 'text-slate-500 hover:bg-slate-100 border-l-4 border-transparent'
@@ -70,7 +72,7 @@ const SidebarLink = ({
   >
     <Icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-blue-600' : ''}`} />
     {label}
-  </Link>
+  </button>
 );
 
 /* ─────────────────── Status Badge ─────────────────── */
@@ -111,6 +113,11 @@ const MiniBarChart = () => (
 
 /* ══════════════════════ Main Component ══════════════════════ */
 export default function SellerDashboard() {
+  const { user } = useAuth();
+  const userName = user?.name || 'Seller';
+  const userInitials = userName.substring(0, 2).toUpperCase();
+  const [activeTab, setActiveTab] = useState('Dashboard');
+
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -129,14 +136,14 @@ export default function SellerDashboard() {
     const fetchData = async () => {
       try {
         const [prodRes, orderRes] = await Promise.all([
-          api.get('/products'),
+          api.get('/products/myproducts'),
           api.get('/orders'),
         ]);
-        setProducts(prodRes.data?.length ? prodRes.data : (mockProducts as any));
-        setOrders(orderRes.data?.length ? orderRes.data : (mockOrders as any));
+        setProducts(Array.isArray(prodRes.data) ? prodRes.data : []);
+        setOrders(Array.isArray(orderRes.data) ? orderRes.data : []);
       } catch {
-        setProducts(mockProducts as any);
-        setOrders(mockOrders as any);
+        setProducts([]);
+        setOrders([]);
       } finally {
         setLoading(false);
       }
@@ -144,25 +151,39 @@ export default function SellerDashboard() {
     fetchData();
   }, []);
 
-  const handleAddProduct = (e: React.FormEvent) => {
+  const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    const product: Product = {
-      _id: Math.random().toString(36).slice(2),
-      name: newProduct.name,
-      price: parseFloat(newProduct.price),
-      description: newProduct.description,
-      category: newProduct.category,
-      stock: parseInt(newProduct.stock),
-      imageUrl: newProduct.imageUrl || undefined,
-    };
-    setProducts([product, ...products]);
-    setShowAddModal(false);
-    setNewProduct({ name: '', price: '', description: '', category: '', stock: '', imageUrl: '' });
+    try {
+      const payload = {
+        name: newProduct.name,
+        price: parseFloat(newProduct.price),
+        description: newProduct.description,
+        category: newProduct.category,
+        stock: parseInt(newProduct.stock),
+        image: newProduct.imageUrl || undefined,
+      };
+      
+      const response = await api.post('/products', payload);
+      
+      setProducts([response.data, ...products]);
+      setShowAddModal(false);
+      setNewProduct({ name: '', price: '', description: '', category: '', stock: '', imageUrl: '' });
+      alert('Product created successfully!');
+    } catch (error) {
+      console.error('Error creating product:', error);
+      alert('Failed to create product.');
+    }
   };
 
-  const handleDeleteProduct = (id: string) => {
+  const handleDeleteProduct = async (id: string) => {
     if (!confirm('Delete this product?')) return;
-    setProducts(products.filter((p) => p._id !== id));
+    try {
+      await api.delete(`/products/${id}`);
+      setProducts(products.filter((p) => p._id !== id));
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Failed to delete product.');
+    }
   };
 
   const handleShipOrder = (orderId: string) => {
@@ -204,22 +225,22 @@ export default function SellerDashboard() {
           </div>
 
           <nav className="flex-1 space-y-1">
-            <SidebarLink icon={LayoutDashboard} label="Dashboard" active />
-            <SidebarLink icon={Package2} label="Orders" />
-            <SidebarLink icon={Archive} label="Inventory" />
-            <SidebarLink icon={Users} label="Customers" />
-            <SidebarLink icon={LineChart} label="Analytics" />
-            <SidebarLink icon={Settings} label="Settings" />
+            <SidebarLink icon={LayoutDashboard} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => setActiveTab('Dashboard')} />
+            <SidebarLink icon={Package2} label="Orders" active={activeTab === 'Orders'} onClick={() => setActiveTab('Orders')} />
+            <SidebarLink icon={Archive} label="Inventory" active={activeTab === 'Inventory'} onClick={() => setActiveTab('Inventory')} />
+            <SidebarLink icon={Users} label="Customers" active={activeTab === 'Customers'} onClick={() => setActiveTab('Customers')} />
+            <SidebarLink icon={LineChart} label="Analytics" active={activeTab === 'Analytics'} onClick={() => setActiveTab('Analytics')} />
+            <SidebarLink icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => setActiveTab('Settings')} />
           </nav>
 
           <div className="mt-auto pt-6 border-t border-slate-200">
             <div className="flex items-center gap-3 px-2 mb-4">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-white font-black text-sm flex-shrink-0">
-                AC
+                {userInitials}
               </div>
               <div>
-                <span className="text-sm font-bold text-slate-900 block">Alex Curator</span>
-                <span className="text-[10px] text-slate-500">Premium Seller</span>
+                <span className="text-sm font-bold text-slate-900 block truncate w-36">{userName}</span>
+                <span className="text-[10px] text-slate-500">{user?.role === 'seller' ? 'Premium Seller' : 'User'}</span>
               </div>
             </div>
             <button className="w-full py-3 bg-blue-600 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all hover:scale-[1.02] active:opacity-80 shadow-lg shadow-blue-600/20">
@@ -238,10 +259,9 @@ export default function SellerDashboard() {
             className="flex justify-between items-center mb-10"
           >
             <div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard Overview</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-slate-900">{activeTab === 'Dashboard' ? 'Dashboard Overview' : activeTab}</h2>
               <p className="text-slate-500 text-sm mt-1">
-                Welcome back, Alex. Your store is performing{' '}
-                <span className="text-green-600 font-semibold">12% better</span> this week.
+                Welcome back, {userName.split(' ')[0]}. Here's what's happening with your store.
               </p>
             </div>
             <div className="flex gap-3">
@@ -260,7 +280,7 @@ export default function SellerDashboard() {
           </motion.header>
 
           {/* ── Bento Stats Grid ── */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+          <div className={`grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 ${activeTab !== 'Dashboard' ? 'hidden' : ''}`}>
             {/* Available Balance */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -278,7 +298,7 @@ export default function SellerDashboard() {
               </div>
               <p className="text-slate-500 text-sm font-medium">Available Balance</p>
               <h3 className="text-2xl font-bold text-slate-900 mt-1 tracking-tight">
-                ${(availableBalance || 12450.80).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                Birr {(availableBalance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </h3>
               <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-wider font-bold">
                 Ready for payout
@@ -302,7 +322,7 @@ export default function SellerDashboard() {
               </div>
               <p className="text-slate-500 text-sm font-medium">Pending Balance</p>
               <h3 className="text-2xl font-bold text-slate-900 mt-1 tracking-tight">
-                ${(pendingBalance || 4210.00).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                Birr {(pendingBalance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </h3>
               <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-wider font-bold">
                 Release in 3–7 days
@@ -317,22 +337,25 @@ export default function SellerDashboard() {
               className="md:col-span-2 bg-slate-100 p-6 rounded-2xl overflow-hidden relative min-h-[140px]"
             >
               <div className="relative z-10">
-                <p className="text-slate-500 text-sm font-medium">Monthly Growth</p>
-                <h3 className="text-2xl font-bold text-slate-900 mt-1 tracking-tight">78% Rate</h3>
+                <p className="text-slate-500 text-sm font-medium">Monthly Sales</p>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1 tracking-tight">Active</h3>
+                <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-wider font-bold">
+                  Keep selling to unlock insights
+                </p>
               </div>
               <MiniBarChart />
             </motion.div>
           </div>
 
           {/* ── Orders & Inventory ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 ${!['Dashboard', 'Orders', 'Inventory'].includes(activeTab) ? 'hidden' : ''}`}>
 
-            {/* Recent Orders — 2/3 */}
+            {/* Recent Orders */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="lg:col-span-2 space-y-5"
+              className={`space-y-5 ${activeTab === 'Dashboard' ? 'lg:col-span-2' : activeTab === 'Orders' ? 'lg:col-span-3' : 'hidden'}`}
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold tracking-tight text-slate-900">Recent Orders</h3>
@@ -427,12 +450,12 @@ export default function SellerDashboard() {
               </div>
             </motion.div>
 
-            {/* Top Inventory — 1/3 */}
+            {/* Top Inventory */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.25 }}
-              className="space-y-5"
+              className={`space-y-5 ${activeTab === 'Dashboard' ? 'lg:col-span-1' : activeTab === 'Inventory' ? 'lg:col-span-3' : 'hidden'}`}
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold tracking-tight text-slate-900">Top Inventory</h3>
@@ -487,13 +510,20 @@ export default function SellerDashboard() {
 
                         {/* Price */}
                         <div className="text-right flex-shrink-0">
-                          <span className="text-sm font-bold text-slate-900">${product.price}</span>
+                          <span className="text-sm font-bold text-slate-900">Birr {product.price}</span>
                         </div>
                       </div>
                     ))}
               </div>
             </motion.div>
           </div>
+
+          {['Customers', 'Analytics', 'Settings'].includes(activeTab) && (
+            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl shadow-sm border border-slate-200/80 mt-8">
+               <h3 className="text-2xl font-bold text-slate-900 mb-2">{activeTab}</h3>
+               <p className="text-slate-500">This module is currently being optimized. Please use the Dashboard for key actions.</p>
+            </div>
+          )}
 
           {/* ── Help Footer ── */}
           <motion.section
@@ -571,7 +601,7 @@ export default function SellerDashboard() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Price ($)</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Price (Birr)</label>
                       <input
                         required
                         type="number"
@@ -597,14 +627,18 @@ export default function SellerDashboard() {
 
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Category</label>
-                    <input
+                    <select
                       required
-                      type="text"
-                      placeholder="Electronics, Fashion, Accessories…"
                       value={newProduct.category}
                       onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 outline-none text-sm transition-all"
-                    />
+                    >
+                      <option value="" disabled>Select a category</option>
+                      <option value="electronics">electronics</option>
+                      <option value="shoes">shoes</option>
+                      <option value="cloth">cloth</option>
+                      <option value="home material">home material</option>
+                    </select>
                   </div>
 
                   <div className="space-y-1.5">

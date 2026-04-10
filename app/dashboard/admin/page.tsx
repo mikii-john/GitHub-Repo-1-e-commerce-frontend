@@ -72,7 +72,7 @@ export default function AdminDashboard() {
             {/* Bento Grid Metrics */}
             <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
-                { label: 'Total Sales', value: '$4,281,950', change: '+12.4%', icon: 'payments', color: 'primary' },
+                { label: 'Total Sales', value: 'Birr 4,281,950', change: '+12.4%', icon: 'payments', color: 'primary' },
                 { label: 'Active Users', value: '84,102', change: '+3.1%', icon: 'group', color: 'tertiary' },
                 { label: 'Total Orders', value: '12,540', change: 'Steady', icon: 'shopping_bag', color: 'orange-100' },
                 { label: 'System Health', value: '98%', status: 'Stable', icon: 'health_and_safety', color: 'green-100' }

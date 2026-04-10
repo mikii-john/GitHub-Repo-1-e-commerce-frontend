@@ -28,22 +28,29 @@ import { motion } from 'framer-motion';
 import api from '@/lib/api';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { mockOrders } from '@/lib/mockData';
+
+interface OrderItem {
+  name: string;
+  qty: number;
+  image: string;
+  price: number;
+  product: string;
+}
 
 interface Order {
   _id: string;
-  product_id: any;
-  total_amount: number;
-  quantity: number;
+  orderItems: OrderItem[];
+  totalPrice: number;
   status: 'Pending' | 'Paid' | 'Shipped' | 'Delivered' | 'Cancelled';
-  payment_status: 'Unpaid' | 'Held' | 'Released' | 'Refunded';
+  isPaid: boolean;
   tracking_number?: string;
   createdAt: string;
 }
 
-const SidebarLink = ({ icon: Icon, label, active = false }: { icon: any, label: string, active?: boolean }) => (
+const SidebarLink = ({ icon: Icon, label, href = "#", active = false, onClick }: { icon: any, label: string, href?: string, active?: boolean, onClick?: (e: any) => void }) => (
   <Link 
-    href="#" 
+    href={href} 
+    onClick={onClick}
     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
       active 
         ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600 font-bold' 
@@ -68,12 +75,13 @@ export default function BuyerDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await api.get('/orders');
-        // If no data or error, use mock data
-        setOrders(data.length > 0 ? data : mockOrders as any);
+        const { data } = await api.get('/orders/buyer');
+        if (Array.isArray(data)) {
+          setOrders(data);
+        }
       } catch (error) {
-        console.error('Failed to fetch buyer orders, falling back to mock data', error);
-        setOrders(mockOrders as any);
+        console.error('Failed to fetch buyer orders', error);
+        setOrders([]);
       } finally {
         setLoading(false);
       }
@@ -84,20 +92,25 @@ export default function BuyerDashboard() {
 
   const handleConfirmDelivery = async (orderId: string) => {
     setConfirming(orderId);
-    setTimeout(() => {
+    try {
+      await api.put(`/orders/${orderId}/confirm-delivery`);
       setOrders(orders.map(order => 
         order._id === orderId 
-          ? { ...order, status: 'Delivered', payment_status: 'Released' } 
+          ? { ...order, status: 'Delivered' } 
           : order
       ));
+    } catch (error) {
+      console.error('Failed to confirm delivery', error);
+      alert('Failed to confirm delivery. Please try again.');
+    } finally {
       setConfirming(null);
-    }, 1500);
+    }
   };
 
   const stats = [
     { 
       label: 'Total Spent', 
-      value: orders.length > 0 ? `$${orders.reduce((acc, o) => acc + o.total_amount, 0).toLocaleString()}` : '$0.00', 
+      value: orders.length > 0 ? `Birr ${orders.reduce((acc, o) => acc + o.totalPrice, 0).toLocaleString()}` : 'Birr 0.00', 
       change: '+12% vs last month', 
       icon: CreditCard, 
       color: 'bg-blue-100 text-blue-600' 
@@ -122,11 +135,11 @@ export default function BuyerDashboard() {
           </div>
           
           <nav className="flex-1 space-y-1">
-            <SidebarLink icon={LayoutDashboard} label="Dashboard" active />
-            <SidebarLink icon={Package} label="Orders" />
-            <SidebarLink icon={Zap} label="Wishlist" />
-            <SidebarLink icon={BarChart3} label="Analytics" />
-            <SidebarLink icon={Settings} label="Settings" />
+            <SidebarLink icon={LayoutDashboard} label="Dashboard" href="/dashboard/buyer" active />
+            <SidebarLink icon={Package} label="Orders" href="/dashboard/buyer" />
+            <SidebarLink icon={Zap} label="Wishlist" href="#" onClick={(e) => { e.preventDefault(); alert("Wishlist coming soon!"); }} />
+            <SidebarLink icon={BarChart3} label="Analytics" href="#" onClick={(e) => { e.preventDefault(); alert("Analytics coming soon!"); }} />
+            <SidebarLink icon={Settings} label="Settings" href="#" onClick={(e) => { e.preventDefault(); alert("Settings coming soon!"); }} />
           </nav>
 
           <div className="mt-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -139,9 +152,9 @@ export default function BuyerDashboard() {
                 <p className="text-[10px] text-slate-500 font-medium tracking-tight uppercase">Buyer Account</p>
               </div>
             </div>
-            <button className="w-full py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors">
+            <Link href="/products" className="block w-full text-center py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors">
               Marketplace
-            </button>
+            </Link>
           </div>
         </aside>
 
@@ -158,11 +171,11 @@ export default function BuyerDashboard() {
             </motion.div>
             
             <div className="flex items-center gap-3">
-              <button className="p-3 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors relative">
+              <button onClick={() => alert("Notifications coming soon!")} className="p-3 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors relative">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full border-2 border-white"></span>
               </button>
-              <button className="p-3 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+              <button onClick={() => alert("Search coming soon!")} className="p-3 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
                 <Search className="w-5 h-5" />
               </button>
             </div>
@@ -211,45 +224,56 @@ export default function BuyerDashboard() {
             </motion.div>
           </div>
 
-          {/* Action Required: Confirm Delivery */}
-          <motion.section 
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-10"
-          >
-            <div className="bg-white p-2 rounded-[2rem] border border-slate-200 shadow-sm">
-              <div className="bg-slate-50/50 rounded-[1.5rem] p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-6">
-                  <div className="w-20 h-20 bg-white rounded-2xl border border-slate-200 p-2 flex items-center justify-center overflow-hidden">
-                    <Package className="w-10 h-10 text-slate-200" />
+          {orders.find(o => o.status === 'Shipped') && (
+            <motion.section 
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mb-10"
+            >
+              <div className="bg-white p-2 rounded-[2rem] border border-slate-200 shadow-sm">
+                <div className="bg-slate-50/50 rounded-[1.5rem] p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex items-center gap-6">
+                    <div className="w-20 h-20 bg-white rounded-2xl border border-slate-200 p-2 flex items-center justify-center overflow-hidden">
+                      {orders.find(o => o.status === 'Shipped')?.orderItems[0]?.image ? (
+                        <img 
+                          src={orders.find(o => o.status === 'Shipped')?.orderItems[0].image} 
+                          alt="Product" 
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : (
+                        <Package className="w-10 h-10 text-slate-200" />
+                      )}
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-blue-600 tracking-widest uppercase">Action Required</span>
+                      <h3 className="text-xl font-black text-slate-900 mt-0.5">
+                        Confirm Delivery: {orders.find(o => o.status === 'Shipped')?.orderItems[0]?.name || 'Your Order'}
+                      </h3>
+                      <p className="text-slate-500 text-sm mt-1">Order arrived or is in transit. Confirm receipt to release payment.</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-blue-600 tracking-widest uppercase">Action Required</span>
-                    <h3 className="text-xl font-black text-slate-900 mt-0.5">Confirm Delivery: Chronos X-1</h3>
-                    <p className="text-slate-500 text-sm mt-1">Order arrived yesterday. Confirm receipt to release payment.</p>
+                  <div className="flex gap-3 w-full md:w-auto">
+                    <button 
+                      onClick={() => handleConfirmDelivery(orders.find(o => o.status === 'Shipped')?._id || '')}
+                      disabled={confirming !== null}
+                      className="flex-1 md:flex-none px-8 py-3.5 bg-blue-600 text-white rounded-full font-bold text-sm hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all active:scale-95 disabled:opacity-50"
+                    >
+                      {confirming === orders.find(o => o.status === 'Shipped')?._id ? 'Confirming...' : 'Confirm Delivery'}
+                    </button>
+                    <button onClick={() => alert("Issue reporting coming soon!")} className="p-3.5 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-red-500 hover:border-red-100 hover:bg-red-50 transition-all">
+                      <AlertCircle className="w-5 h-5" />
+                    </button>
                   </div>
-                </div>
-                <div className="flex gap-3 w-full md:w-auto">
-                  <button 
-                    onClick={() => handleConfirmDelivery('o2')}
-                    disabled={confirming === 'o2'}
-                    className="flex-1 md:flex-none px-8 py-3.5 bg-blue-600 text-white rounded-full font-bold text-sm hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all active:scale-95 disabled:opacity-50"
-                  >
-                    {confirming === 'o2' ? 'Confirming...' : 'Confirm Delivery'}
-                  </button>
-                  <button className="p-3.5 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-red-500 hover:border-red-100 hover:bg-red-50 transition-all">
-                    <AlertCircle className="w-5 h-5" />
-                  </button>
                 </div>
               </div>
-            </div>
-          </motion.section>
+            </motion.section>
+          )}
 
           {/* Recent Orders Table */}
           <section className="bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm mb-10">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-black tracking-tight text-slate-900">Recent Orders</h2>
-              <Link href="#" className="text-blue-600 font-bold text-xs hover:underline flex items-center gap-1">
+              <Link href="#" onClick={(e) => { e.preventDefault(); alert("Full history coming soon!"); }} className="text-blue-600 font-bold text-xs hover:underline flex items-center gap-1">
                 View All History <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
@@ -278,10 +302,20 @@ export default function BuyerDashboard() {
                         <td className="py-5 font-mono text-xs text-slate-400">#{order._id.slice(-6).toUpperCase()}</td>
                         <td className="py-5">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center p-2">
-                              <Package className="w-5 h-5 text-slate-300" />
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden">
+                              {order.orderItems[0]?.image ? (
+                                <img src={order.orderItems[0].image} alt={order.orderItems[0].name} className="w-full h-full object-cover" />
+                              ) : (
+                                <Package className="w-5 h-5 text-slate-300" />
+                              )}
                             </div>
-                            <span className="font-bold text-sm text-slate-900">{typeof order.product_id === 'object' ? order.product_id.name : 'Product ITEM'}</span>
+                            <div className="flex flex-col">
+                              <span className="font-bold text-sm text-slate-900">
+                                {order.orderItems[0]?.name || 'Unknown Product'}
+                                {order.orderItems.length > 1 && ` + ${order.orderItems.length - 1} more`}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-medium">Qty: {order.orderItems.reduce((acc, item) => acc + item.qty, 0)}</span>
+                            </div>
                           </div>
                         </td>
                         <td className="py-5 text-sm text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</td>
@@ -295,7 +329,7 @@ export default function BuyerDashboard() {
                           </span>
                         </td>
                         <td className="py-5 text-right">
-                          <button className="text-slate-400 hover:text-blue-600 p-2 transition-colors">
+                          <button onClick={() => alert("Order details coming soon!")} className="text-slate-400 hover:text-blue-600 p-2 transition-colors">
                             {order.status === 'Shipped' ? (
                               <span className="text-[10px] font-black underline uppercase">Track</span>
                             ) : (
@@ -322,7 +356,7 @@ export default function BuyerDashboard() {
                 </div>
               </div>
               <div className="absolute top-6 right-6 z-10">
-                <button className="bg-white/10 backdrop-blur-md p-2.5 rounded-full border border-white/10 text-white hover:bg-white/20 transition-all">
+                <button onClick={() => alert("Map controls coming soon!")} className="bg-white/10 backdrop-blur-md p-2.5 rounded-full border border-white/10 text-white hover:bg-white/20 transition-all">
                   <MapPin className="w-5 h-5" />
                 </button>
               </div>
@@ -345,13 +379,13 @@ export default function BuyerDashboard() {
                       <Smartphone className="w-4 h-4 text-slate-400" />
                       <span className="text-xs font-bold text-slate-600">********4421</span>
                     </div>
-                    <Edit2 className="w-3.5 h-3.5 text-blue-600 cursor-pointer" />
+                    <Edit2 onClick={() => alert("Phone editing coming soon!")} className="w-3.5 h-3.5 text-blue-600 cursor-pointer" />
                   </div>
                 </div>
               </div>
               <div className="mt-8 pt-6 border-t border-slate-50 flex justify-end gap-3">
-                <button className="px-5 py-2.5 bg-slate-50 rounded-full text-[10px] font-black text-slate-500 hover:bg-slate-100 transition-colors uppercase tracking-widest">Privacy Center</button>
-                <button className="px-5 py-2.5 bg-blue-600 text-white rounded-full text-[10px] font-black hover:bg-blue-700 transition-all uppercase tracking-widest shadow-lg shadow-blue-600/10">Edit Profile</button>
+                <button onClick={() => alert("Privacy Center coming soon!")} className="px-5 py-2.5 bg-slate-50 rounded-full text-[10px] font-black text-slate-500 hover:bg-slate-100 transition-colors uppercase tracking-widest">Privacy Center</button>
+                <button onClick={() => alert("Profile editing coming soon!")} className="px-5 py-2.5 bg-blue-600 text-white rounded-full text-[10px] font-black hover:bg-blue-700 transition-all uppercase tracking-widest shadow-lg shadow-blue-600/10">Edit Profile</button>
               </div>
             </div>
           </div>

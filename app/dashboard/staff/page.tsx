@@ -5,7 +5,6 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { mockUsers, mockDisputes, mockOrders } from '@/lib/mockData';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -29,23 +28,7 @@ interface Ticket {
   createdAt: string;
 }
 
-// ─── Mock data extended ───────────────────────────────────────────────────────
-
-const initialUsers: ManagedUser[] = [
-  { _id: 'u1', name: 'Admin User',       email: 'admin@mock.com',  role: 'admin',  status: 'Active' },
-  { _id: 'u2', name: 'Aisha Suleiman',   email: 'aisha@mock.com',  role: 'seller', status: 'Active' },
-  { _id: 'u3', name: 'Dawit Haile',      email: 'dawit@mock.com',  role: 'buyer',  status: 'Active' },
-  { _id: 'u4', name: 'Staff Support',    email: 'staff@mock.com',  role: 'staff',  status: 'Active' },
-  { _id: 'u5', name: 'Fatuma Zewdie',    email: 'fatuma@mock.com', role: 'buyer',  status: 'Blocked' },
-  { _id: 'u6', name: 'Samuel Bekele',    email: 'samuel@mock.com', role: 'seller', status: 'Active' },
-];
-
-const mockTickets: Ticket[] = [
-  { id: 't1', subject: 'Payment stuck in escrow', user: 'Dawit Haile',    priority: 'High',   status: 'Open',        createdAt: '2026-04-04' },
-  { id: 't2', subject: 'Product not as described', user: 'Fatuma Zewdie', priority: 'High',   status: 'In Progress', createdAt: '2026-04-03' },
-  { id: 't3', subject: 'Delivery delayed 10 days',  user: 'Alex Curator', priority: 'Medium', status: 'Open',        createdAt: '2026-04-02' },
-  { id: 't4', subject: 'Seller not responding',     user: 'Meron Tadesse',priority: 'Low',    status: 'Resolved',    createdAt: '2026-04-01' },
-];
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 // ─── Sidebar nav ──────────────────────────────────────────────────────────────
 
@@ -111,9 +94,9 @@ const TicketStatusPill = ({ status }: { status: Ticket['status'] }) => {
 
 export default function StaffDashboard() {
   const [activeTab, setActiveTab] = useState<string>('overview');
-  const [users, setUsers] = useState<ManagedUser[]>(initialUsers);
-  const [tickets, setTickets] = useState<Ticket[]>(mockTickets);
-  const [disputes, setDisputes] = useState(mockDisputes);
+  const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [disputes, setDisputes] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | UserRole>('all');
   const [confirmModal, setConfirmModal] = useState<{ userId: string; action: 'block' | 'unblock' } | null>(null);
@@ -323,7 +306,7 @@ export default function StaffDashboard() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#f3f4f5]">
-                          {mockTickets.slice(0, 3).map(t => (
+                          {tickets.slice(0, 3).map(t => (
                             <tr key={t.id} className="hover:bg-[#f3f4f5]/30 transition-colors">
                               <td className="px-8 py-4">
                                 <p className="text-sm font-bold">{t.subject}</p>

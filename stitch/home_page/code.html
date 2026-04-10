@@ -96,7 +96,7 @@
 <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none font-sans antialiased tracking-tight">
 <div class="flex justify-between items-center px-6 py-3 max-w-full mx-auto">
 <div class="flex items-center gap-8">
-<span class="text-2xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">CuratorCommerce</span>
+<span class="text-2xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">Adare Shop</span>
 <div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96 group">
 <span class="material-symbols-outlined text-outline text-lg">search</span>
 <input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-outline-variant" placeholder="Search curated collections..." type="text"/>
@@ -146,46 +146,54 @@
 <section class="py-16 px-6 max-w-7xl mx-auto">
 <div class="flex justify-between items-end mb-12">
 <div>
-<span class="text-primary font-bold tracking-widest text-xs uppercase mb-2 block">Curation</span>
-<h2 class="text-3xl md:text-4xl font-bold text-on-surface tracking-tight">Top Categories</h2>
+<h2 class="text-3xl md:text-4xl font-bold text-on-surface tracking-tight">Categories</h2>
 </div>
 <button class="hidden md:flex items-center gap-2 text-secondary font-medium hover:text-primary transition-colors">
                     Explore All Collections
                     <span class="material-symbols-outlined">chevron_right</span>
 </button>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-<div class="group relative rounded-lg overflow-hidden h-[450px] bg-surface-container-low cursor-pointer">
-<img alt="Electronics category" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Sleek silver high-end headphones on a minimalist gray background with soft shadows, high-quality product photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2JO0neS5LGFh6JorYFqdOdvD804q0LGu7ZZMvpCxS0BlJD2Omrcls95WnGZsJcG1cd51qr0UrDOiIY-ETU7e3skDh3erA0bZpx1fk-89y7JU0LXLNDlFH7b_37FmUAVQgrOm3FjL2cuZD9nwMYRQk5NShUB3qS6MGfgSH2T-R0OtudoCVVsBUIW3N9cagzDUutzIvd_gGwkVty7Q4r02lcpAz_MeWCYyBR2J3rIuZwy82BpKzeTc2Z2EnHPjhDyNtz7RJDsqGnDA"/>
-<div class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-transparent to-transparent opacity-60"></div>
-<div class="absolute bottom-8 left-8 right-8">
-<h3 class="text-2xl font-bold text-white mb-2">Electronics</h3>
-<p class="text-white/80 text-sm mb-4">Precision engineering meets minimalist aesthetics.</p>
-<span class="text-white font-semibold flex items-center gap-2 text-sm group-hover:translate-x-2 transition-transform">
-                            Shop Electronics <span class="material-symbols-outlined text-xs">arrow_forward</span>
-</span>
+<div class="grid grid-cols-1 md:grid-cols-12 md:grid-rows-2 gap-4 auto-rows-[250px] md:auto-rows-none md:h-[600px]">
+<div class="md:col-span-7 md:row-span-2 group relative rounded-2xl overflow-hidden bg-surface-container-low cursor-pointer h-full">
+<img alt="Electronics category" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&amp;w=2670"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-on-background/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
+<div class="absolute bottom-8 left-8 right-8 text-white">
+<h3 class="text-3xl md:text-4xl font-extrabold mb-2">Electronics</h3>
+<p class="text-white/80 text-sm md:text-base mb-4 max-w-sm">Precision engineering meets minimalist aesthetics.</p>
+<div class="flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+Shop Electronics <span class="material-symbols-outlined text-sm">arrow_forward</span>
 </div>
 </div>
-<div class="group relative rounded-lg overflow-hidden h-[450px] bg-surface-container-low cursor-pointer">
-<img alt="Fashion category" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Editorial fashion photography of neutral-toned clothing items neatly folded on a beige textured surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe9P6jENJuU9dE_toJqVSwiJOrqeBA7YiJiNnzJneJ7YBQYSWDOOd5Ig04NXCed3NTiZVwcy4GORK9JR2NJB-uQdFxVzv8ULHjmGKBWrFkAR_fJ0Eru98TdgJWh7SdwkeS3TFOAQ6KoCAN_BZu4jNe-Js7JabKs54aS62pZr1yPhbekajvYlBcFG_kgRaL6cTc4TmEx-91Ev32hkJHRONmPqpJKbeIHKx5Ws8OFwbJqAS8quNCIzLVEXccZ2st91Q1epPx2XSahHI"/>
-<div class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-transparent to-transparent opacity-60"></div>
-<div class="absolute bottom-8 left-8 right-8">
-<h3 class="text-2xl font-bold text-white mb-2">Fashion</h3>
-<p class="text-white/80 text-sm mb-4">Timeless essentials for the modern wardrobe.</p>
-<span class="text-white font-semibold flex items-center gap-2 text-sm group-hover:translate-x-2 transition-transform">
-                            Shop Fashion <span class="material-symbols-outlined text-xs">arrow_forward</span>
-</span>
+</div>
+<div class="md:col-span-5 md:row-span-1 group relative rounded-2xl overflow-hidden bg-surface-container-low cursor-pointer h-full">
+<img alt="Shoes category" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&amp;w=2670"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
+<div class="absolute bottom-6 left-6 right-6 text-white">
+<h3 class="text-2xl font-bold mb-1">Shoes</h3>
+<p class="text-white/80 text-sm mb-3">Step into the future.</p>
+<div class="flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+Shop Shoes <span class="material-symbols-outlined text-sm">arrow_forward</span>
 </div>
 </div>
-<div class="group relative rounded-lg overflow-hidden h-[450px] bg-surface-container-low cursor-pointer">
-<img alt="Home category" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Minimalist living room with beige ceramic vase, textured sofa, and indirect warm light filtering through linen curtains" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoHSWuQ1sotKylLPS3RAfKwuhU844k9O-I-B7mExb4836Ley_aPH0bAKD4s6EdXVEUBnzxAXspSBKG41j-G_WHU3AA9EG5kFwqZ9CmFIjgrrwZyUnJhT5uvAaqMBnelYqbxJsM29TsEi_uxqgy6dY6ex6TDqnM0ev1aZvseIb4dn7S909leT4HdIbqZycKcBNp-F7g8LB9i8sBeSlmsNkFAhzdFDkabo9osTmgiNEcujlphVNRQll2GjeWxXUAatCXIaD0ZR6PQpk"/>
-<div class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-transparent to-transparent opacity-60"></div>
-<div class="absolute bottom-8 left-8 right-8">
-<h3 class="text-2xl font-bold text-white mb-2">Home</h3>
-<p class="text-white/80 text-sm mb-4">Elevated objects for your personal sanctuary.</p>
-<span class="text-white font-semibold flex items-center gap-2 text-sm group-hover:translate-x-2 transition-transform">
-                            Shop Home <span class="material-symbols-outlined text-xs">arrow_forward</span>
-</span>
+</div>
+<div class="md:col-span-2 md:row-span-1 md:col-start-8 group relative rounded-2xl overflow-hidden bg-surface-container-low cursor-pointer h-full">
+<img alt="Cloth category" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&amp;w=2670"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
+<div class="absolute bottom-6 left-6 right-6 text-white">
+<h3 class="text-xl font-bold mb-1">Cloth</h3>
+<div class="flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+Shop <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="md:col-span-3 md:row-span-1 group relative rounded-2xl overflow-hidden bg-surface-container-low cursor-pointer h-full">
+<img alt="Home Material category" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&amp;w=2670"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
+<div class="absolute bottom-6 left-6 right-6 text-white">
+<h3 class="text-xl font-bold mb-1">Home</h3>
+<div class="flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300">
+Shop <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
 </div>
 </div>
 </div>
@@ -317,27 +325,12 @@
 </div>
 </div>
 </section>
-<section class="py-24 px-6 bg-on-background text-white rounded-t-xl overflow-hidden relative">
-<div class="absolute top-0 right-0 p-24 opacity-10 pointer-events-none">
-<span class="material-symbols-outlined text-[300px]" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
-</div>
-<div class="max-w-3xl mx-auto text-center relative z-10">
-<h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">Join the inner circle.</h2>
-<p class="text-white/60 text-lg mb-10">Get early access to limited collections and private sales.</p>
-<div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-<input class="flex-1 bg-white/10 border border-white/20 rounded-full px-6 py-4 text-white placeholder:text-white/40 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Enter your email" type="email"/>
-<button class="bg-white text-on-background px-8 py-4 rounded-full font-bold hover:bg-slate-100 transition-colors">
-                        Subscribe
-                    </button>
-</div>
-<p class="text-[10px] text-white/30 uppercase tracking-[0.2em] mt-8">By subscribing, you agree to our Terms and Privacy Policy.</p>
-</div>
-</section>
+
 </main>
 <footer class="bg-surface-container px-6 py-16">
 <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12">
 <div class="col-span-2 md:col-span-1">
-<span class="text-xl font-bold tracking-tighter text-on-surface block mb-6">CuratorCommerce</span>
+<span class="text-xl font-bold tracking-tighter text-on-surface block mb-6">Adare Shop</span>
 <p class="text-secondary text-sm leading-relaxed mb-6">Redefining the digital shopping experience through intentional design and premium curation.</p>
 <div class="flex gap-4">
 <a class="text-secondary hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
@@ -373,7 +366,7 @@
 </div>
 </div>
 <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest text-outline">
-<p>© 2024 CuratorCommerce. All rights reserved.</p>
+<p>© 2024 Adare Shop. All rights reserved.</p>
 <div class="flex gap-8">
 <a class="hover:text-primary" href="#">Privacy Policy</a>
 <a class="hover:text-primary" href="#">Terms of Service</a>

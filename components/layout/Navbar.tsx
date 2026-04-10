@@ -14,9 +14,11 @@ import {
   Bell
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '@/context/CartContext';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
+  const { cartItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const getDashboardLink = () => {
@@ -35,15 +37,15 @@ const Navbar = () => {
                 <ShoppingBag className="text-white w-6 h-6" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent hidden sm:block">
-                NNM Shop
+                Adare Shop
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-muted hover:text-foreground transition-colors font-medium">
-              Browse
+            <Link href="/products" className="text-muted hover:text-foreground transition-colors font-medium">
+              Products
             </Link>
             
             {/* Search Bar */}
@@ -62,9 +64,11 @@ const Navbar = () => {
               className="p-2 text-muted hover:text-primary transition-colors relative group"
             >
               <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span className="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold shadow-sm">
-                2
-              </span>
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold shadow-sm">
+                  {cartItems.length}
+                </span>
+              )}
             </Link>
 
             {isAuthenticated ? (
@@ -136,11 +140,11 @@ const Navbar = () => {
           >
             <div className="px-4 pt-2 pb-6 space-y-4">
               <Link 
-                href="/" 
+                href="/products" 
                 className="block py-2 text-base font-medium text-foreground hover:text-primary"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Browse Products
+                Products
               </Link>
               
               {isAuthenticated ? (

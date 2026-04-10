@@ -69,8 +69,8 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         
         <div className="flex items-center justify-between mt-auto">
           <div className="flex flex-col">
-            <span className="text-xs text-muted font-medium line-through decoration-secondary/50">$ {(product.price * 1.2).toFixed(2)}</span>
-            <span className="text-xl font-black text-foreground">$ {product.price.toFixed(2)}</span>
+            <span className="text-xs text-muted font-medium line-through decoration-secondary/50">Birr {(product.price * 1.2).toFixed(2)}</span>
+            <span className="text-xl font-black text-foreground">Birr {product.price.toFixed(2)}</span>
           </div>
           
           <div className={`text-[10px] font-bold px-2 py-1 rounded-full ${

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import api from '@/lib/api';
@@ -17,7 +18,7 @@ import {
 } from 'lucide-react';
 
 // Remove allProducts static list as we'll fetch from API
-const CATEGORIES_FALLBACK = ['All', 'Electronics', 'Fashion', 'Home & Living', 'Accessories'];
+const CATEGORIES_FALLBACK = ['All', 'electronics', 'shoes', 'cloth', 'home material'];
 const SORT_OPTIONS = ['Newest', 'Price: Low-High', 'Price: High-Low', 'Rating'] as const;
 type SortOption = (typeof SORT_OPTIONS)[number];
 
@@ -108,11 +109,11 @@ const ProductCard = ({ product }: { product: ProductData }) => {
             <div className="flex flex-col">
               {hasDiscount && (
                 <span className="text-xs text-[#737686] line-through">
-                  ${(product as any).originalPrice!.toFixed(2)}
+                  Birr {(product as any).originalPrice!.toFixed(2)}
                 </span>
               )}
               <span className={`text-xl font-black ${hasDiscount ? 'text-[#004ac6]' : 'text-[#191c1d]'}`}>
-                ${product.price.toFixed(2)}
+                Birr {product.price.toFixed(2)}
               </span>
             </div>
             <button
@@ -129,7 +130,8 @@ const ProductCard = ({ product }: { product: ProductData }) => {
 };
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
-export default function ProductListingPage() {
+// ─── Main Content ─────────────────────────────────────────────────────────────
+function ProductListingContent() {
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -140,6 +142,14 @@ export default function ProductListingPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [minRating, setMinRating] = useState(0);
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get('category');
+
+  useEffect(() => {
+    if (initialCategory) {
+      setSelectedCategories([initialCategory]);
+    }
+  }, [initialCategory]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -158,11 +168,11 @@ export default function ProductListingPage() {
     fetchProducts();
   }, []);
 
-  const categoriesFromData = useMemo(() => {
-    return ['All', ...Array.from(new Set(products.map((p) => p.category)))];
+  const categories = useMemo(() => {
+    const rawCategories = products.map((p) => p.category).filter(Boolean);
+    // Combine fallback categories with any categories found in the live data
+    return Array.from(new Set([...CATEGORIES_FALLBACK, ...rawCategories]));
   }, [products]);
-
-  const categories = products.length > 0 ? categoriesFromData : CATEGORIES_FALLBACK;
 
   const toggleCategory = (cat: string) => {
     if (cat === 'All') {
@@ -262,8 +272,8 @@ export default function ProductListingPage() {
             className="w-full h-1.5 bg-[#c3c6d7] rounded-full appearance-none cursor-pointer accent-[#004ac6]"
           />
           <div className="flex justify-between text-xs font-bold text-[#737686]">
-            <span>$0</span>
-            <span className="text-[#004ac6]">${priceMax.toLocaleString()}</span>
+            <span>Birr 0</span>
+            <span className="text-[#004ac6]">Birr {priceMax.toLocaleString()}</span>
           </div>
         </div>
       </div>
@@ -413,6 +423,26 @@ export default function ProductListingPage() {
             </div>
           </div>
 
+          {/* Category Pill Bar */}
+          <div className="mb-8 flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-[#edeeef]">
+            {categories.map((cat) => {
+              const isActive = selectedCategories.includes(cat);
+              return (
+                <button
+                  key={cat}
+                  onClick={() => toggleCategory(cat)}
+                  className={`px-6 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap border ${
+                    isActive
+                      ? 'bg-[#004ac6] text-white border-[#004ac6] shadow-sm'
+                      : 'bg-white text-[#434655] border-[#c3c6d7] hover:border-[#004ac6] hover:text-[#004ac6]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
           {/* Loading / Error / Content */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-32">
@@ -539,7 +569,7 @@ export default function ProductListingPage() {
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-2">
             <span className="text-xl font-black tracking-tighter text-[#191c1d] mb-5 block">
-              NNM Shop
+              Adare Shop
             </span>
             <p className="text-sm text-[#434655] leading-relaxed max-w-sm mb-8">
               Defining the intersection of utility and art. We source objects that elevate your
@@ -593,7 +623,7 @@ export default function ProductListingPage() {
         </div>
         <div className="max-w-[1440px] mx-auto mt-12 pt-8 border-t border-[#c3c6d7]/40 flex flex-col md:flex-row justify-between gap-4">
           <p className="text-[10px] font-bold text-[#737686] uppercase tracking-widest">
-            © 2024 NNM Shop. All rights reserved.
+            © 2024 Adare Shop. All rights reserved.
           </p>
           <p className="text-[10px] font-bold text-[#737686] uppercase tracking-widest">
             Designed for the Discerning Eye.
@@ -611,5 +641,18 @@ export default function ProductListingPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function ProductListingPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="w-12 h-12 border-4 border-[#004ac6]/20 border-t-[#004ac6] rounded-full animate-spin mb-4" />
+        <p className="text-[#434655] font-medium font-sans">Preparing your collection...</p>
+      </div>
+    }>
+      <ProductListingContent />
+    </Suspense>
   );
 }
